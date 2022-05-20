@@ -11,33 +11,43 @@ import CoreGraphics
 
 enum FileType: String {
   case jpg = "JPG"
+  case all
 }
 
 class ImageManager: ObservableObject {
   @Published var imagesHaveLoaded: Bool = false
   var images: [ImageData] = []
+  var thumbnailImages: [ImageData] = []
   let fileManager = FileManager.default
-  var url: URL?
+  var sourceImageURLs = [URL]()
+  var destinationImagePaths = [String]()
   
   func loadImages(from url: URL, fileType: FileType) {
     do {
       let imagePaths = try fileManager.contentsOfDirectory(atPath: url.path)
       let fullImagePaths = imagePaths.map { return url.path + "/" + $0 }
       
-      //      for item in fullImagePaths {
-      //        let nsItem = NSString(string: item)
-      //        print("Found \(nsItem.pathExtension)")
-      //      }
-      
       let filteredImagePaths = fullImagePaths.filter { path in
+        if fileType == .all {
+          return true
+        }
         return NSString(string: path).pathExtension == fileType.rawValue
       }
-      images = filteredImagePaths.compactMap { path in
-        print(path)
-        let image = downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1)
-        return ImageData(image: image)
-//        return nil // TODO: Show that an image failed to load
+      DispatchQueue.global(qos: .background).async {
+        self.thumbnailImages = filteredImagePaths.compactMap { path in
+          let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1)
+          return ImageData(image: image)
+        }
       }
+      images = filteredImagePaths.compactMap { path in
+        guard let image = NSImage(byReferencingFile: path) else {
+          return nil
+        }
+        
+        return ImageData(image: image)
+      }
+      
+      sourceImageURLs = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
       imagesHaveLoaded = true
     } catch {
       // TODO: Show an error
@@ -46,7 +56,17 @@ class ImageManager: ObservableObject {
     }
   }
   
-  func downSampleImage(path: String, to pointSize: CGSize, scale: CGFloat) -> NSImage {
+  func saveImages(to destinationUrl: URL, completion: (() -> Void)? = nil) {
+    for sourceImageURL in sourceImageURLs {
+      let fileName = sourceImageURL.lastPathComponent
+      let toURL = destinationUrl.appendingPathComponent(fileName)
+      
+      _ = !fileManager.secureCopyItem(at: sourceImageURL, to: toURL) // TODO: Handle Errors
+    }
+    completion?()
+  }
+  
+  private func downSampleImage(path: String, to pointSize: CGSize, scale: CGFloat) -> NSImage {
     let imageURL = NSURL(fileURLWithPath: path)
     
     let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary

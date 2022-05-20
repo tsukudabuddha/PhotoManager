@@ -9,8 +9,15 @@ import Combine
 import SwiftUI
 
 class SelectDirectoryViewModel: ObservableObject {
-  var directoryName = "Directory"
   @Published var selectedDirectoryUrl: URL?
+  
+  var directoryName = "Directory"
+  let buttonText: String
+  
+  init(buttonText: String) {
+    self.buttonText = buttonText
+  }
+  
   
   func openPanel() {
     let panel = NSOpenPanel()

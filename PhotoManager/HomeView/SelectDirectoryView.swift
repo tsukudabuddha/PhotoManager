@@ -13,8 +13,8 @@ struct SelectDirectoryView: View {
   var body: some View {
     HStack {
       Text(model.directoryName)
-      Button("Select your image folder", action: model.openPanel)
+      Button(model.buttonText, action: model.openPanel)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(idealWidth: 800, maxWidth: .infinity, idealHeight: 600, maxHeight: .infinity)
   }
 }
