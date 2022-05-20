@@ -15,6 +15,5 @@ struct SelectDirectoryView: View {
       Text(model.directoryName)
       Button(model.buttonText, action: model.openPanel)
     }
-    .frame(idealWidth: 800, maxWidth: .infinity, idealHeight: 600, maxHeight: .infinity)
   }
 }

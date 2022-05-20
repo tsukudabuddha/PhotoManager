@@ -11,7 +11,17 @@ import SwiftUI
 struct PhotoManagerApp: App {
   var body: some Scene {
     WindowGroup {
-      HomeView(model: HomeViewModel())
+      TabView {
+        ImportView(model: ImportViewModel(imageManager: ImageManager()))
+          .tabItem {
+            Text("Import Images")
+          }
+        AllPhotosView(model: AllPhotosViewModel(images: []))
+          .tabItem {
+            Text("View All")
+          }
+      }
+      
     }
   }
 }
