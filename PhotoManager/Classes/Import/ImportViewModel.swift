@@ -21,11 +21,18 @@ class ImportViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var progress: CGFloat = 0
   
+  var availableDrives: [URL]
+  @Published var selectedDrive: URL
+  
+  var fileManager: FileManager = FileManager.default
+  
   // MARK: Observers
   var selectDirectoryObserver: AnyCancellable?
   
   init(imageManager: ImageManager) {
     self.imageManager = imageManager
+    self.availableDrives = fileManager.mountedVolumeURLs(includingResourceValuesForKeys: [.volumeIsRemovableKey, .isVolumeKey, .volumeIsRootFileSystemKey], options: .skipHiddenVolumes) ?? []
+    self.selectedDrive = availableDrives.first ?? URL(string: "")! // TODO: SHould I change this??
   }
   
   enum DirectoryType {

@@ -9,30 +9,26 @@ import SwiftUI
 
 struct ImportView: View {
   @ObservedObject var model: ImportViewModel
+  @State var isDebug: Bool = false
   var body: some View {
-    VStack {
+    Form {
       Spacer()
       // MARK: Input
-      VStack(alignment: .trailing, spacing: 4) {
-        HStack { // Image Source
-          HStack {
-            Text("Source:")
-              .bold()
-            Text(model.sourceDirectory != nil ? model.sourceDirectory!.path : "Select your image folder")
+      Section {
+        if isDebug {
+          debugInputs
+        } else {
+          VStack(alignment: .trailing, spacing: 4) {
+            Picker("Source:", selection: $model.selectedDrive) { // Image Source
+              ForEach(model.availableDrives, id: \.self) {
+                Text($0.path)
+              }
+            }
           }
-          
-          Button("Select", action: { model.openPanel(for: .source) })
-        }
-        HStack { // Image Destination
-          HStack {
-            Text("Destination:")
-              .bold()
-            Text(model.desinationDirectory != nil ? model.desinationDirectory!.path : "Select your image folder")
-          }
-          
-          Button("Select", action: { model.openPanel(for: .destination) })
+          destinationSelector
         }
       }
+      
       
       Spacer()
       
@@ -46,6 +42,10 @@ struct ImportView: View {
       }
       .disabled(model.importButtonsAreDisabled)
       Spacer()
+      Spacer()
+      Button("Toggle Debug") {
+        isDebug.toggle()
+      }
     }
     .padding(EdgeInsets(
       top: 50,
@@ -64,6 +64,29 @@ struct ImportView: View {
   @ViewBuilder private var loadingOverlay: some View {
     if model.isLoading {
       ProgressView("Importing...", value: model.progress, total: model.imageManager.total)
+    }
+  }
+  
+  @ViewBuilder private var debugInputs: some View {
+    HStack { // Image Source
+      HStack {
+        Text("Source:")
+          .bold()
+        Text(model.sourceDirectory != nil ? model.sourceDirectory!.path : "Select your image folder")
+      }
+      Button("Select", action: { model.openPanel(for: .source) })
+    }
+    destinationSelector
+  }
+  
+  @ViewBuilder private var destinationSelector: some View {
+    HStack { // Image Destination
+      HStack {
+        Text("Destination:")
+          .bold()
+        Text(model.desinationDirectory != nil ? model.desinationDirectory!.path : "Select your image folder")
+      }
+      Button("Select", action: { model.openPanel(for: .destination) })
     }
   }
 }
