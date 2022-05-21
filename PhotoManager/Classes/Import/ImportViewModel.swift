@@ -11,11 +11,7 @@ import SwiftUI
 class ImportViewModel: ObservableObject {
   @ObservedObject var imageManager: ImageManager
   @Published var sourceDirectory: URL?
-  var desinationDirectory: URL? {
-    didSet {
-      
-    }
-  }
+  var desinationDirectory: URL?
   @Published var importButtonsAreDisabled: Bool = true
   @Published var isPresentingAlert: Bool = false
   @Published var isLoading: Bool = false
