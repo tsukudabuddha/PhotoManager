@@ -38,9 +38,9 @@ struct ImportView: View {
       
       // MARK: Buttons
       Button("Import JPEG Only", action: model.importJPEG)
-       .disabled(model.importButtonsAreDisabled)
+        .disabled(model.importButtonsAreDisabled)
       Button("Import RAW Only", action: model.importRAW)
-       .disabled(model.importButtonsAreDisabled)
+        .disabled(model.importButtonsAreDisabled)
       Button("Import All Images") {
         model.importAll()
       }
@@ -53,8 +53,17 @@ struct ImportView: View {
       bottom: 50,
       trailing: 50))
     .frame(width: 800, height: 600, alignment: .center)
+    .blur(radius: model.isLoading ? 5 : 0)
+    .overlay(loadingOverlay)
     .alert("Congrats!", isPresented: $model.isPresentingAlert) {
       Button("OK", role: .cancel) { }
+    }
+    
+  }
+  
+  @ViewBuilder private var loadingOverlay: some View {
+    if model.isLoading {
+      ProgressView("Importing...", value: model.progress, total: model.imageManager.total)
     }
   }
 }

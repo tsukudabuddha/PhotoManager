@@ -17,10 +17,14 @@ enum FileType: String {
 
 class ImageManager: ObservableObject {
   @Published var imagesHaveLoaded: Bool = false
+  var total: CGFloat {
+    return CGFloat(sourceImageUrls.count)
+  }
+  
   var images: [ImageData] = []
   var thumbnailImages: [ImageData] = []
   let fileManager = FileManager.default
-  var sourceImageURLs = [URL]() // TODO: Rename or remove if not being used -- using in saveImage
+  var sourceImageUrls = [URL]()
   var destinationImagePaths = [String]()
   
   func loadImages(from url: URL, fileType: FileType) {
@@ -48,7 +52,7 @@ class ImageManager: ObservableObject {
         return ImageData(image: image)
       }
       
-      sourceImageURLs = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
+      sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
       imagesHaveLoaded = true
     } catch {
       // TODO: Show an error
@@ -57,7 +61,7 @@ class ImageManager: ObservableObject {
     }
   }
   
-  func saveImages(from sourceUrl: URL, to destinationUrl: URL, fileType: FileType, completion: (() -> Void)? = nil) {
+  func saveImages(from sourceUrl: URL, to destinationUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
     
     guard let imagePaths = try? fileManager.contentsOfDirectory(atPath: sourceUrl.path) else { return } // TODO: Show an error
     let fullImagePaths = imagePaths.map { return sourceUrl.path + "/" + $0 }
@@ -69,9 +73,10 @@ class ImageManager: ObservableObject {
       return NSString(string: path).pathExtension == fileType.rawValue
     }
     
-    let sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
+    sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
     
     for sourceImageURL in sourceImageUrls {
+      progressUpdateMethod(sourceImageURL == sourceImageUrls.last ? 0 : 1) // Only add one if not on the last one
       let fileName = sourceImageURL.lastPathComponent
       let toURL = destinationUrl.appendingPathComponent(fileName)
       

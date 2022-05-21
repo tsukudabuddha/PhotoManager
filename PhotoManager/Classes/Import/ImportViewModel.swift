@@ -9,7 +9,7 @@ import Combine
 import SwiftUI
 
 class ImportViewModel: ObservableObject {
-  let imageManager: ImageManager
+  @ObservedObject var imageManager: ImageManager
   @Published var sourceDirectory: URL?
   var desinationDirectory: URL? {
     didSet {
@@ -18,6 +18,8 @@ class ImportViewModel: ObservableObject {
   }
   @Published var importButtonsAreDisabled: Bool = true
   @Published var isPresentingAlert: Bool = false
+  @Published var isLoading: Bool = false
+  @Published var progress: CGFloat = 0
   
   // MARK: Observers
   var selectDirectoryObserver: AnyCancellable?
@@ -55,13 +57,26 @@ class ImportViewModel: ObservableObject {
   func importImages(fileType: FileType) {
     guard let sourceDirectory = sourceDirectory,
           let destinationDirectory = desinationDirectory else { return } // TODO: Show an error
-    imageManager.saveImages(
-      from: sourceDirectory,
-      to: destinationDirectory,
-      fileType: fileType,
-      completion: { [weak self] in
-        self?.isPresentingAlert = true
-      })
+    isLoading = true
+    DispatchQueue.global(qos: .background).async {
+      self.imageManager.saveImages(
+        from: sourceDirectory,
+        to: destinationDirectory,
+        fileType: fileType,
+        progressUpdateMethod: { progressIncrement in
+          DispatchQueue.main.async {
+            self.progress += CGFloat(progressIncrement)
+          }
+        },
+        completion: { [weak self] in
+          DispatchQueue.main.async {
+            self?.isPresentingAlert = true
+            self?.isLoading = false
+            self?.progress = 0
+          }
+        })
+    }
+    
   }
   
   func importJPEG() {
