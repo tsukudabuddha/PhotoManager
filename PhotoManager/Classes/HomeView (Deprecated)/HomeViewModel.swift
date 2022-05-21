@@ -15,26 +15,17 @@ class HomeViewModel: ObservableObject {
     case displayImages
   }
   
-  @ObservedObject var selectDirectoryModel = SelectDirectoryViewModel(
-    buttonText: "Select the directory where your images are stored"
-  )
   lazy var importModel: ImportViewModel = ImportViewModel(imageManager: imageManager)
   @ObservedObject var imageManager = ImageManager()
   @Published var state: State = .selectDirectory
   @Published var isLoading: Bool = false
   
-  var selectDirectoryObserver: AnyCancellable?
   var imageManagerObserver: AnyCancellable?
   
   init() {
-    selectDirectoryObserver = selectDirectoryModel.$selectedDirectoryUrl.didSet.sink { [weak self] url in
-      self?.handleDirectoryDidChange(url: url)
-    }
-    
     imageManagerObserver = imageManager.$imagesHaveLoaded.didSet.sink { [weak self] _ in
       guard let self = self else { return }
       self.handleImageManagerDidChange()
-      self.importModel.isViewAllDisabled = false
     }
     
   }
@@ -48,15 +39,15 @@ class HomeViewModel: ObservableObject {
   }
   
   func handleDirectoryDidChange(url: URL?) {
-    guard let url = url else { return } // TODO: Show some kind of error
-    
-    if selectDirectoryModel.directoryName != "Directory" { // TODO: Change this signal
-      // Start loading
-//      self.isLoading = true
-      DispatchQueue.global(qos: .background).async {
-        self.imageManager.loadImages(from: url, fileType: .jpg) // TODO: Allow for more image types
-      }
-    }
+//    guard let url = url else { return } // TODO: Show some kind of error
+//
+//    if selectDirectoryModel.directoryName != "Directory" { // TODO: Change this signal
+//      // Start loading
+////      self.isLoading = true
+//      DispatchQueue.global(qos: .background).async {
+//        self.imageManager.loadImages(from: url, fileType: .jpg) // TODO: Allow for more image types
+//      }
+//    }
   }
   
 }

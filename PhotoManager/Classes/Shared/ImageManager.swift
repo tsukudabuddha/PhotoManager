@@ -11,6 +11,7 @@ import CoreGraphics
 
 enum FileType: String {
   case jpg = "JPG"
+  case raw = "RAF" // TODO: Add support for more raw file types
   case all
 }
 
@@ -19,7 +20,7 @@ class ImageManager: ObservableObject {
   var images: [ImageData] = []
   var thumbnailImages: [ImageData] = []
   let fileManager = FileManager.default
-  var sourceImageURLs = [URL]()
+  var sourceImageURLs = [URL]() // TODO: Rename or remove if not being used -- using in saveImage
   var destinationImagePaths = [String]()
   
   func loadImages(from url: URL, fileType: FileType) {
@@ -56,8 +57,21 @@ class ImageManager: ObservableObject {
     }
   }
   
-  func saveImages(to destinationUrl: URL, completion: (() -> Void)? = nil) {
-    for sourceImageURL in sourceImageURLs {
+  func saveImages(from sourceUrl: URL, to destinationUrl: URL, fileType: FileType, completion: (() -> Void)? = nil) {
+    
+    guard let imagePaths = try? fileManager.contentsOfDirectory(atPath: sourceUrl.path) else { return } // TODO: Show an error
+    let fullImagePaths = imagePaths.map { return sourceUrl.path + "/" + $0 }
+    
+    let filteredImagePaths = fullImagePaths.filter { path in
+      if fileType == .all {
+        return true
+      }
+      return NSString(string: path).pathExtension == fileType.rawValue
+    }
+    
+    let sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
+    
+    for sourceImageURL in sourceImageUrls {
       let fileName = sourceImageURL.lastPathComponent
       let toURL = destinationUrl.appendingPathComponent(fileName)
       

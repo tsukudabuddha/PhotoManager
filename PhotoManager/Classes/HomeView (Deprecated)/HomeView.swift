@@ -17,7 +17,8 @@ struct HomeView: View {
   var body: some View {
     VStack {
       if model.state == .selectDirectory {
-        SelectDirectoryView(model: model.selectDirectoryModel)
+//        SelectDirectoryView(model: model.selectDirectoryModel)
+        Text("OOP")
       } else if model.state == .displayImages {
         PhotosView(model: PhotosViewModel(images: model.imageManager.images, state: .allPhotos))
       } else if model.state == .importMenu {
