@@ -25,6 +25,7 @@
 		49A544422838308400FC860E /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544412838308400FC860E /* ImportView.swift */; };
 		49A544442838313100FC860E /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544432838313100FC860E /* ImportViewModel.swift */; };
 		49A544462838585600FC860E /* FileManager+secureCopyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544452838585600FC860E /* FileManager+secureCopyItem.swift */; };
+		49A5444B2839DABB00FC860E /* URL+isDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A5444A2839DABB00FC860E /* URL+isDirectory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 		49A544412838308400FC860E /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		49A544432838313100FC860E /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
 		49A544452838585600FC860E /* FileManager+secureCopyItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+secureCopyItem.swift"; sourceTree = "<group>"; };
+		49A5444A2839DABB00FC860E /* URL+isDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+isDirectory.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 			children = (
 				491E484A283740BC006E1666 /* Publisher+didSet.swift */,
 				49A544452838585600FC860E /* FileManager+secureCopyItem.swift */,
+				49A5444A2839DABB00FC860E /* URL+isDirectory.swift */,
 			);
 			path = Utilites;
 			sourceTree = "<group>";
@@ -339,6 +342,7 @@
 				491E481428372C20006E1666 /* HomeView.swift in Sources */,
 				49A544422838308400FC860E /* ImportView.swift in Sources */,
 				491E483E28372D10006E1666 /* HomeViewModel.swift in Sources */,
+				49A5444B2839DABB00FC860E /* URL+isDirectory.swift in Sources */,
 				491E48442837337D006E1666 /* AllPhotosView.swift in Sources */,
 				491E4851283750B2006E1666 /* PhotosViewModel.swift in Sources */,
 				491E481228372C20006E1666 /* PhotoManagerApp.swift in Sources */,

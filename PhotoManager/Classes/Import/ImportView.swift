@@ -21,15 +21,28 @@ struct ImportView: View {
         if isDebug {
           debugInputs
         } else {
-          VStack { // WIP
+          VStack(alignment: .trailing) { // WIP
+            let isDisabled = model.selectedDrive == nil
             Picker("SD Card Drive:", selection: $model.selectedDrive) { // Image Source
               ForEach(model.availableDrives, id: \.self) {
-                Text($0.path)
+                Text($0.path).tag($0 as URL?)
               }
+            }
+            .disabled(isDisabled)
+            if isDisabled {
+              HStack {
+                Text("There are no attached drives")
+                  .foregroundColor(.red)
+                Button("Refresh", action: model.refreshVolumes)
+              }
+              
             }
             destinationSelector
           }.fixedSize(horizontal: true, vertical: false)
         }
+      }
+      .onAppear {
+        model.updateImportButtonState()
       }
       Spacer()
       
@@ -38,10 +51,8 @@ struct ImportView: View {
         .disabled(model.importButtonsAreDisabled)
       Button("Import RAW Only", action: model.importRAW)
         .disabled(model.importButtonsAreDisabled)
-      Button("Import All Images") {
-        model.importAll()
-      }
-      .disabled(model.importButtonsAreDisabled)
+      Button("Import All Images", action: model.importAll)
+        .disabled(model.importButtonsAreDisabled)
       Spacer()
       Spacer()
       Button("Toggle Debug") {
@@ -56,8 +67,15 @@ struct ImportView: View {
     .frame(width: 800, height: 600, alignment: .center)
     .blur(radius: model.isLoading ? 5 : 0)
     .overlay(loadingOverlay)
-    .alert("Congrats!", isPresented: $model.isPresentingAlert) {
+    .alert("Congrats!", isPresented: $model.isPresentingCongratsAlert) {
       Button("OK", role: .cancel) { }
+    }
+    .alert(isPresented: $model.isPresentingErrorAlert) {
+      Alert(
+        title: Text("An error has occurred"),
+        message: Text(model.errorText ?? ""),
+        dismissButton: .default(Text("Got it!"))
+      )
     }
     
   }
@@ -70,15 +88,15 @@ struct ImportView: View {
   
   @ViewBuilder private var debugInputs: some View {
     VStack(alignment: .trailing) {
-    HStack { // Image Source
-      HStack {
-        Text("Source:")
-          .bold()
-        Text(model.sourceDirectory?.path ?? "Select your image folder")
+      HStack { // Image Source
+        HStack {
+          Text("Source:")
+            .bold()
+          Text(model.sourceDirectory?.path ?? "Select your image folder")
+        }
+        Button("Select", action: { model.openPanel(for: .source) })
       }
-      Button("Select", action: { model.openPanel(for: .source) })
-    }
-    destinationSelector
+      destinationSelector
     }
   }
   

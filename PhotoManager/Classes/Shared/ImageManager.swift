@@ -13,6 +13,17 @@ enum FileType: String {
   case jpg = "JPG"
   case raw = "RAF" // TODO: Add support for more raw file types
   case all
+  
+  static func isValidImageFile(url: URL, fileType: FileType) -> Bool {
+    switch fileType {
+    case .jpg:
+      return ["JPG", "JPEG" , "JPE" , "JIF" , "JFIF"].contains(url.pathExtension.uppercased())
+    case .raw:
+      return ["RAF", "RAW" , "GPR" , "ARW" , "NEF", "DNG"].contains(url.pathExtension.uppercased())
+    case .all:
+      return FileType.isValidImageFile(url: url, fileType: .raw) || FileType.isValidImageFile(url: url, fileType: .jpg)
+    }
+  }
 }
 
 class ImageManager: ObservableObject {
@@ -61,24 +72,40 @@ class ImageManager: ObservableObject {
     }
   }
   
+  func findAllSubfiles(url: URL) -> [URL] {
+    guard let subURLs = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
+      return []
+      
+    } // TODO: Show an error
+    for url in subURLs {
+      if url.isDirectory {
+        return findAllSubfiles(url: url)
+      }
+    }
+    return subURLs
+  }
+  
   func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
     
-    guard let imagePaths = try? fileManager.contentsOfDirectory(atPath: sourceUrl.path) else { return } // TODO: Show an error
-    let fullImagePaths = imagePaths.map { return sourceUrl.path + "/" + $0 }
+    guard let directoryUrls = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return } // TODO: Show an error
     
-    let filteredImagePaths = fullImagePaths.filter { path in
-      if fileType == .all {
-        return true
+    sourceImageUrls = [URL]()
+    for url in directoryUrls {
+      if url.isDirectory {
+        sourceImageUrls.append(contentsOf: findAllSubfiles(url: url))
+      } else {
+        sourceImageUrls.append(url)
       }
-      return NSString(string: path).pathExtension == fileType.rawValue
     }
     
-    sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
+    sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
     
+    print(sourceImageUrls)
+    // TODO: Use filtered images here
     for sourceImageURL in sourceImageUrls {
       progressUpdateMethod(sourceImageURL == sourceImageUrls.last ? 0 : 1) // Only add one if not on the last one
       let fileName = sourceImageURL.lastPathComponent
-
+      
       guard let date = getDate(for: sourceImageURL)
       else {
         // TODO: No images will be copied, show an error
@@ -120,34 +147,14 @@ class ImageManager: ObservableObject {
   }
   
   private func getDate(for sourceImageUrl: URL) -> Date? {
-    guard let data = NSData(contentsOf: sourceImageUrl),
-          let source = CGImageSourceCreateWithData(data, nil),
-          let metadata = CGImageSourceCopyPropertiesAtIndex(source, 0, nil),
-          let metadataDict = metadata as? [String: AnyObject]
+    guard let attr = try? fileManager.attributesOfItem(atPath: sourceImageUrl.path),
+          let creationDate = (attr[.creationDate] as? NSDate) as Date?
     else {
       // TODO: Log or display metadata error
       return nil
     }
     
-    // Check Tiff first -- arbitrary default
-    if let tiff = metadataDict["{TIFF}"] as? [String: AnyObject],
-       let tiffDateTime = tiff["DateTime"] as? String,
-       let tiffDate = createDate(from: tiffDateTime) {
-      return tiffDate
-    } else if let exif = metadataDict["{Exif}"] as? [String: AnyObject],
-              let exifDateTime = exif["DateTimeOriginal"] as? String {
-      return createDate(from: exifDateTime)
-    }
-    return nil
-    
-  }
-
-  private func createDate(from metadataString: String) -> Date? {
-    let dateFormatter = DateFormatter()
-    // TODO: Handle more data formats
-    dateFormatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
-    
-    return dateFormatter.date(from: metadataString)
+    return creationDate
   }
   
   private func downSampleImage(path: String, to pointSize: CGSize, scale: CGFloat) -> NSImage {
