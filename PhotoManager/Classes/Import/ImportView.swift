@@ -10,26 +10,27 @@ import SwiftUI
 struct ImportView: View {
   @ObservedObject var model: ImportViewModel
   @State var isDebug: Bool = false
+  var destinationText: String {
+    return isDebug ? "Destination:" : "Photo Library:"
+  }
   var body: some View {
-    Form {
+    VStack() {
       Spacer()
       // MARK: Input
       Section {
         if isDebug {
           debugInputs
         } else {
-          VStack(alignment: .trailing, spacing: 4) {
-            Picker("Source:", selection: $model.selectedDrive) { // Image Source
+          VStack { // WIP
+            Picker("SD Card Drive:", selection: $model.selectedDrive) { // Image Source
               ForEach(model.availableDrives, id: \.self) {
                 Text($0.path)
               }
             }
-          }
-          destinationSelector
+            destinationSelector
+          }.fixedSize(horizontal: true, vertical: false)
         }
       }
-      
-      
       Spacer()
       
       // MARK: Buttons
@@ -68,23 +69,25 @@ struct ImportView: View {
   }
   
   @ViewBuilder private var debugInputs: some View {
+    VStack(alignment: .trailing) {
     HStack { // Image Source
       HStack {
         Text("Source:")
           .bold()
-        Text(model.sourceDirectory != nil ? model.sourceDirectory!.path : "Select your image folder")
+        Text(model.sourceDirectory?.path ?? "Select your image folder")
       }
       Button("Select", action: { model.openPanel(for: .source) })
     }
     destinationSelector
+    }
   }
   
   @ViewBuilder private var destinationSelector: some View {
     HStack { // Image Destination
       HStack {
-        Text("Destination:")
+        Text(destinationText)
           .bold()
-        Text(model.desinationDirectory != nil ? model.desinationDirectory!.path : "Select your image folder")
+        Text(model.destinationDirectory?.path ?? "Select your image folder")
       }
       Button("Select", action: { model.openPanel(for: .destination) })
     }

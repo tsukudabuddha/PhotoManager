@@ -9,9 +9,10 @@ import Combine
 import SwiftUI
 
 class ImportViewModel: ObservableObject {
+  let userDefaults = UserDefaults.standard
   @ObservedObject var imageManager: ImageManager
   @Published var sourceDirectory: URL?
-  var desinationDirectory: URL?
+  @Published var destinationDirectory: URL?
   @Published var importButtonsAreDisabled: Bool = true
   @Published var isPresentingAlert: Bool = false
   @Published var isLoading: Bool = false
@@ -28,7 +29,8 @@ class ImportViewModel: ObservableObject {
   init(imageManager: ImageManager) {
     self.imageManager = imageManager
     self.availableDrives = fileManager.mountedVolumeURLs(includingResourceValuesForKeys: [.volumeIsRemovableKey, .isVolumeKey, .volumeIsRootFileSystemKey], options: .skipHiddenVolumes) ?? []
-    self.selectedDrive = availableDrives.first ?? URL(string: "")! // TODO: SHould I change this??
+    self.selectedDrive = availableDrives.first ?? URL(string: "")! // TODO: Should I change this??
+    self.destinationDirectory = URL(string: (userDefaults.object(forKey: "defaultImageFolder") as? String) ?? "")
   }
   
   enum DirectoryType {
@@ -49,17 +51,18 @@ class ImportViewModel: ObservableObject {
       case .source:
         sourceDirectory = url
       case .destination:
-        desinationDirectory = url
+        destinationDirectory = url
+        userDefaults.set(url.absoluteString, forKey: "defaultImageFolder")
       }
       
-      guard sourceDirectory != nil && desinationDirectory != nil else { return }
+      guard sourceDirectory != nil && destinationDirectory != nil else { return }
       importButtonsAreDisabled = false
     }
   }
   
   func importImages(fileType: FileType) {
     guard let sourceDirectory = sourceDirectory,
-          let destinationDirectory = desinationDirectory else { return } // TODO: Show an error
+          let destinationDirectory = destinationDirectory else { return } // TODO: Show an error
     isLoading = true
     DispatchQueue.global(qos: .background).async {
       self.imageManager.saveImages(
