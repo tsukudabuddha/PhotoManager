@@ -21,7 +21,7 @@ struct ImportView: View {
         if isDebug {
           debugInputs
         } else {
-          VStack(alignment: .trailing) { // WIP
+          VStack(alignment: .trailing) {
             let isDisabled = model.selectedDrive == nil
             Picker("SD Card Drive:", selection: $model.selectedDrive) { // Image Source
               ForEach(model.availableDrives, id: \.self) {
@@ -38,6 +38,12 @@ struct ImportView: View {
               
             }
             destinationSelector
+            HStack(alignment: .bottom) {
+              Text("Seperate RAW files from JPEG")
+              Toggle("", isOn: $model.storeRAWSeperately)
+                .toggleStyle(.checkbox)
+            }
+            
           }.fixedSize(horizontal: true, vertical: false)
         }
       }

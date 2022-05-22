@@ -24,6 +24,10 @@ enum FileType: String {
       return FileType.isValidImageFile(url: url, fileType: .raw) || FileType.isValidImageFile(url: url, fileType: .jpg)
     }
   }
+  
+  static func isRAWImage(url: URL) -> Bool {
+    return FileType.isValidImageFile(url: url, fileType: .raw)
+  }
 }
 
 class ImageManager: ObservableObject {
@@ -100,8 +104,6 @@ class ImageManager: ObservableObject {
     
     sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
     
-    print(sourceImageUrls)
-    // TODO: Use filtered images here
     for sourceImageURL in sourceImageUrls {
       progressUpdateMethod(sourceImageURL == sourceImageUrls.last ? 0 : 1) // Only add one if not on the last one
       let fileName = sourceImageURL.lastPathComponent
@@ -115,6 +117,10 @@ class ImageManager: ObservableObject {
       var toURL = photoLibraryUrl
       for pathComponent in directoryPathComponents(for: date) {
         toURL = toURL.appendingPathComponent(pathComponent)
+      }
+      let isRaw = (fileType == .raw || fileType == .all) && FileType.isRAWImage(url: sourceImageURL)
+      if isRaw {
+        toURL = toURL.appendingPathComponent("Raw")
       }
       createDirectoryIfNecessary(for: toURL)
       

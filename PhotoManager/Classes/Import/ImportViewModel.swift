@@ -16,6 +16,7 @@ class ImportViewModel: ObservableObject {
   @Published var importButtonsAreDisabled: Bool = true
   @Published var isPresentingCongratsAlert: Bool = false
   @Published var isPresentingErrorAlert: Bool = false
+  @Published var storeRAWSeperately: Bool = true
   var errorText: String?
   @Published var isLoading: Bool = false
   @Published var progress: CGFloat = 0
