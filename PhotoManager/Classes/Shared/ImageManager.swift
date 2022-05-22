@@ -76,14 +76,23 @@ class ImageManager: ObservableObject {
     }
   }
   
-  func findAllSubfiles(url: URL) -> [URL] {
+  func findSubfiles(for directory: URL) -> [URL] {
+    guard let subfileURLs = try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
+      return []
+    }
+    return subfileURLs
+  }
+  
+  func findAllSubDirectories(url: URL) -> [URL] {
     guard let subURLs = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
       return []
       
     } // TODO: Show an error
+    var subDirectories = [URL]()
     for url in subURLs {
+      print(url)
       if url.isDirectory {
-        return findAllSubfiles(url: url)
+        subDirectories.append(contentsOf: findAllSubDirectories(url: url))
       }
     }
     return subURLs
@@ -93,18 +102,25 @@ class ImageManager: ObservableObject {
     
     guard let directoryUrls = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return } // TODO: Show an error
     
-    sourceImageUrls = [URL]()
+    var subDirectories = [URL]()
     for url in directoryUrls {
+      print(url)
       if url.isDirectory {
-        sourceImageUrls.append(contentsOf: findAllSubfiles(url: url))
+        subDirectories.append(contentsOf: findAllSubDirectories(url: url))
       } else {
-        sourceImageUrls.append(url)
+        subDirectories.append(url)
       }
     }
     
+    sourceImageUrls = [URL]()
+    subDirectories.forEach { directory in
+      let fileUrls = findSubfiles(for: directory)
+      sourceImageUrls.append(contentsOf: fileUrls)
+    }
     sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
     
     for sourceImageURL in sourceImageUrls {
+      print(sourceImageURL)
       progressUpdateMethod(sourceImageURL == sourceImageUrls.last ? 0 : 1) // Only add one if not on the last one
       let fileName = sourceImageURL.lastPathComponent
       
