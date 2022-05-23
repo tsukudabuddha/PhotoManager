@@ -75,31 +75,8 @@ class ImageManager: ObservableObject {
       print(error)
     }
   }
-  
-  func findSubfiles(for directory: URL) -> [URL] {
-    guard let subfileURLs = try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
-      return []
-    }
-    return subfileURLs
-  }
-  
-  func findAllSubDirectories(url: URL) -> [URL] {
-    guard let subURLs = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
-      return []
-      
-    } // TODO: Show an error
-    var subDirectories = [URL]()
-    for url in subURLs {
-      print(url)
-      if url.isDirectory {
-        subDirectories.append(contentsOf: findAllSubDirectories(url: url))
-      }
-    }
-    return subURLs
-  }
-  
+
   func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
-    
     guard let directoryUrls = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return } // TODO: Show an error
     
     var subDirectories = [URL]()
@@ -112,7 +89,7 @@ class ImageManager: ObservableObject {
       }
     }
     
-    sourceImageUrls = [URL]()
+    var sourceImageUrls = [URL]()
     subDirectories.forEach { directory in
       let fileUrls = findSubfiles(for: directory)
       sourceImageUrls.append(contentsOf: fileUrls)
@@ -145,11 +122,34 @@ class ImageManager: ObservableObject {
       
       _ = !fileManager.secureCopyItem(at: sourceImageURL, to: toURL) // TODO: Handle Errors
     }
+    self.sourceImageUrls = sourceImageUrls
     completion?()
   }
   
   
   // MARK: Helpers
+  
+  private func findSubfiles(for directory: URL) -> [URL] {
+    guard let subfileURLs = try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
+      return []
+    }
+    return subfileURLs
+  }
+  
+  private func findAllSubDirectories(url: URL) -> [URL] {
+    guard let subURLs = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
+      return []
+      
+    } // TODO: Show an error
+    var subDirectories = [URL]()
+    for url in subURLs {
+      print(url)
+      if url.isDirectory {
+        subDirectories.append(contentsOf: findAllSubDirectories(url: url))
+      }
+    }
+    return subURLs
+  }
   private func directoryPathComponents(for date: Date) -> [String] {
     // TODO: Allow for more user control with directories and names
     let dateFormatter = DateFormatter()
