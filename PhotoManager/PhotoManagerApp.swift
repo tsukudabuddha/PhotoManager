@@ -14,11 +14,11 @@ struct PhotoManagerApp: App {
       TabView {
         ImportView(model: ImportViewModel(imageManager: ImageManager()))
           .tabItem {
-            Text("Quick Import")
+            Text("Import + Review")
           }
         AllPhotosView(model: AllPhotosViewModel(images: []))
           .tabItem {
-            Text("Review Images")
+            Text("View All Images")
           }
       }
       

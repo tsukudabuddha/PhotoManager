@@ -17,6 +17,7 @@ class ImportViewModel: ObservableObject {
   @Published var isPresentingCongratsAlert: Bool = false
   @Published var isPresentingErrorAlert: Bool = false
   @Published var storeRAWSeperately: Bool = true
+  @Published var shouldShowReviewImages: Bool = false
   var errorText: String?
   @Published var isLoading: Bool = false
   @Published var progress: CGFloat = 0
@@ -31,6 +32,7 @@ class ImportViewModel: ObservableObject {
   
   // MARK: Observers
   var selectDirectoryObserver: AnyCancellable?
+  var imageHaveLoadedObserver: AnyCancellable?
   
   init(imageManager: ImageManager) {
     self.imageManager = imageManager
@@ -38,6 +40,13 @@ class ImportViewModel: ObservableObject {
     self.availableDrives = mountedVolumes.filter { $0.absoluteString != "file:///" } // Only show removable drives
     self.selectedDrive = availableDrives.first
     self.destinationDirectory = URL(string: (userDefaults.object(forKey: "defaultImageFolder") as? String) ?? "")
+    
+    imageHaveLoadedObserver = imageManager.$imagesHaveLoaded.didSet.sink { haveLoaded in
+      // TODO: Stop Loading indicator
+      if haveLoaded {
+        self.shouldShowReviewImages = true
+      }
+    }
   }
   
   enum DirectoryType {
@@ -61,7 +70,7 @@ class ImportViewModel: ObservableObject {
         destinationDirectory = url
         userDefaults.set(url.absoluteString, forKey: "defaultImageFolder")
       }
-      
+      updateImportButtonState()
     }
   }
   
@@ -84,6 +93,14 @@ class ImportViewModel: ObservableObject {
   
   func importAll() {
     importImages(fileType: .all)
+  }
+  
+  func reviewImages() {
+    guard let sourceDirectory = sourceDirectory else {
+      return
+    }
+    // Start Loading indicator
+    imageManager.loadImages(from: sourceDirectory, fileType: .all)
   }
   
   // MARK: Helpers

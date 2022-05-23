@@ -26,6 +26,7 @@
 		49A544442838313100FC860E /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544432838313100FC860E /* ImportViewModel.swift */; };
 		49A544462838585600FC860E /* FileManager+secureCopyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544452838585600FC860E /* FileManager+secureCopyItem.swift */; };
 		49A5444B2839DABB00FC860E /* URL+isDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A5444A2839DABB00FC860E /* URL+isDirectory.swift */; };
+		49A5444F283B388B00FC860E /* CheckboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A5444E283B388B00FC860E /* CheckboxView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		49A544432838313100FC860E /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
 		49A544452838585600FC860E /* FileManager+secureCopyItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+secureCopyItem.swift"; sourceTree = "<group>"; };
 		49A5444A2839DABB00FC860E /* URL+isDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+isDirectory.swift"; sourceTree = "<group>"; };
+		49A5444E283B388B00FC860E /* CheckboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -187,6 +189,7 @@
 		49A544482838756F00FC860E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				49A5444C283B386B00FC860E /* StyleGuide */,
 				49A544492838790500FC860E /* Shared */,
 				49A544472838717400FC860E /* Import */,
 				49A5444028382FC700FC860E /* PhotoViewer */,
@@ -203,6 +206,22 @@
 				491E484728373A42006E1666 /* ImageData.swift */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		49A5444C283B386B00FC860E /* StyleGuide */ = {
+			isa = PBXGroup;
+			children = (
+				49A5444D283B387A00FC860E /* Buttons */,
+			);
+			path = StyleGuide;
+			sourceTree = "<group>";
+		};
+		49A5444D283B387A00FC860E /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				49A5444E283B388B00FC860E /* CheckboxView.swift */,
+			);
+			path = Buttons;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -349,6 +368,7 @@
 				491E485328375176006E1666 /* AllPhotosViewModel.swift in Sources */,
 				491E484828373A42006E1666 /* ImageData.swift in Sources */,
 				49A544442838313100FC860E /* ImportViewModel.swift in Sources */,
+				49A5444F283B388B00FC860E /* CheckboxView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

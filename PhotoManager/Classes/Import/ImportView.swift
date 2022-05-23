@@ -14,56 +14,21 @@ struct ImportView: View {
     return isDebug ? "Destination:" : "Photo Library:"
   }
   var body: some View {
+    // TODO: Need to present SingleImageViewer when model.shouldShowReviewImages
     VStack() {
       Spacer()
-      // MARK: Input
-      Section {
-        if isDebug {
-          debugInputs
-        } else {
-          VStack(alignment: .trailing) {
-            let isDisabled = model.selectedDrive == nil
-            Picker("SD Card Drive:", selection: $model.selectedDrive) { // Image Source
-              ForEach(model.availableDrives, id: \.self) {
-                Text($0.path).tag($0 as URL?)
-              }
-            }
-            .disabled(isDisabled)
-            if isDisabled {
-              HStack {
-                Text("There are no attached drives")
-                  .foregroundColor(.red)
-                Button("Refresh", action: model.refreshVolumes)
-              }
-              
-            }
-            destinationSelector
-            HStack(alignment: .bottom) {
-              Text("Seperate RAW files from JPEG")
-              Toggle("", isOn: $model.storeRAWSeperately)
-                .toggleStyle(.checkbox)
-            }
-            
-          }.fixedSize(horizontal: true, vertical: false)
-        }
-      }
-      .onAppear {
-        model.updateImportButtonState()
-      }
+      inputView
       Spacer()
-      
-      // MARK: Buttons
-      Button("Import JPEG Only", action: model.importJPEG)
-        .disabled(model.importButtonsAreDisabled)
-      Button("Import RAW Only", action: model.importRAW)
-        .disabled(model.importButtonsAreDisabled)
-      Button("Import All Images", action: model.importAll)
-        .disabled(model.importButtonsAreDisabled)
+      buttonStack
+      .disabled(model.importButtonsAreDisabled)
       Spacer()
       Spacer()
       Button("Toggle Debug") {
         isDebug.toggle()
       }
+    }
+    .onAppear {
+      model.updateImportButtonState()
     }
     .padding(EdgeInsets(
       top: 50,
@@ -83,7 +48,42 @@ struct ImportView: View {
         dismissButton: .default(Text("Got it!"))
       )
     }
-    
+  }
+  
+  @ViewBuilder private var buttonStack: some View {
+    Button("Review Images", action: model.reviewImages)
+    Button("Import JPEG Only", action: model.importJPEG)
+    Button("Import RAW Only", action: model.importRAW)
+    Button("Import All Images", action: model.importAll)
+  }
+  
+  @ViewBuilder private var inputView: some View {
+    Section {
+      VStack(alignment: .trailing) {
+        if isDebug {
+          debugInput
+        } else {
+          let isDisabled = model.selectedDrive == nil
+          Picker("SD Card Drive:", selection: $model.selectedDrive) { // Image Source
+            ForEach(model.availableDrives, id: \.self) {
+              Text($0.path).tag($0 as URL?)
+            }
+          }
+          .disabled(isDisabled)
+          if isDisabled {
+            HStack {
+              Text("There are no attached drives")
+                .foregroundColor(.red)
+              Button("Refresh", action: model.refreshVolumes)
+              Spacer()
+            }
+          }
+        }
+        
+        destinationSelector
+        CheckboxView(text: "Seperate RAW files from JPEG", isOn: $model.storeRAWSeperately)
+      }.fixedSize(horizontal: true, vertical: false)
+    }
   }
   
   @ViewBuilder private var loadingOverlay: some View {
@@ -92,7 +92,7 @@ struct ImportView: View {
     }
   }
   
-  @ViewBuilder private var debugInputs: some View {
+  @ViewBuilder private var debugInput: some View {
     VStack(alignment: .trailing) {
       HStack { // Image Source
         HStack {
@@ -102,7 +102,6 @@ struct ImportView: View {
         }
         Button("Select", action: { model.openPanel(for: .source) })
       }
-      destinationSelector
     }
   }
   

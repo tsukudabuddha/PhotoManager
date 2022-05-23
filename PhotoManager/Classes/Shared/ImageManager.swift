@@ -43,64 +43,34 @@ class ImageManager: ObservableObject {
   var destinationImagePaths = [String]()
   
   func loadImages(from url: URL, fileType: FileType) {
-    do {
-      let imagePaths = try fileManager.contentsOfDirectory(atPath: url.path)
-      let fullImagePaths = imagePaths.map { return url.path + "/" + $0 }
-      
-      let filteredImagePaths = fullImagePaths.filter { path in
-        if fileType == .all {
-          return true
-        }
-        return NSString(string: path).pathExtension == fileType.rawValue
-      }
+    guard let imageURLs = getAllFiles(at: url) else {
+      // TODO: Show an error
+      return
+    }
+    
+    let filteredImageUrls = imageURLs.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
 
-      images = filteredImagePaths.compactMap { path in
-        guard let image = NSImage(byReferencingFile: path) else {
+    images = filteredImageUrls.compactMap { return ImageData(image: NSImage(byReferencing: $0)) }
+    
+    DispatchQueue.global(qos: .background).async {
+      self.thumbnailImages = filteredImageUrls.compactMap { url in
+        if !FileType.isValidImageFile(url: url, fileType: .raw) { // TODO: Support RAW file downsampling
+          let image = self.downSampleImage(at: url, to: CGSize(width: 800, height: 800), scale: 1)
+          return ImageData(image: image)
+        } else {
           return nil
         }
-        
-        return ImageData(image: image)
       }
-      
-      DispatchQueue.global(qos: .background).async {
-        self.thumbnailImages = filteredImagePaths.compactMap { path in
-          let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1)
-          return ImageData(image: image)
-        }
-      }
-      
-      sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
-      imagesHaveLoaded = true
-    } catch {
-      // TODO: Show an error
-      // failed to read directory – bad permissions, perhaps?
-      print(error)
     }
+    
+    sourceImageUrls = filteredImageUrls
+    imagesHaveLoaded = true
   }
 
   func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
-    guard let sourceContents = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return } // TODO: Show an error
+    guard let allSourceFiles = getAllFiles(at: sourceUrl) else { return }
     
-    var subDirectories = [URL]()
-    var fileURLs = [URL]()
-    for url in sourceContents {
-      if url.isDirectory {
-        subDirectories.append(url)
-        subDirectories.append(contentsOf: findAllSubDirectories(url: url))
-      } else {
-        fileURLs.append(url)
-      }
-    }
-    
-    var sourceImageUrls = [URL]()
-    subDirectories.forEach { directory in
-      let fileUrls = findSubfiles(for: directory)
-      sourceImageUrls.append(contentsOf: fileUrls)
-    }
-    
-    sourceImageUrls.append(contentsOf: fileURLs) // Include the files in the base directory
-    
-    sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
+    sourceImageUrls = allSourceFiles.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
     
     for sourceImageURL in sourceImageUrls {
       print(sourceImageURL)
@@ -128,18 +98,39 @@ class ImageManager: ObservableObject {
       
       _ = !fileManager.secureCopyItem(at: sourceImageURL, to: toURL) // TODO: Handle Errors
     }
-    self.sourceImageUrls = sourceImageUrls
     completion?()
   }
   
   
   // MARK: Helpers
   
+  private func getAllFiles(at url: URL) -> [URL]? {
+    guard let sourceContents = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return nil } // TODO: Show an error
+    
+    var subDirectories = [URL]()
+    var fileURLs = [URL]()
+    for url in sourceContents {
+      if url.isDirectory {
+        subDirectories.append(url)
+        subDirectories.append(contentsOf: findAllSubDirectories(url: url))
+      } else {
+        fileURLs.append(url)
+      }
+    }
+    
+    subDirectories.forEach { directory in
+      let subFileURLs = findSubfiles(for: directory)
+      fileURLs.append(contentsOf: subFileURLs)
+    }
+    
+    return fileURLs
+  }
+  
   private func findSubfiles(for directory: URL) -> [URL] {
     guard let subfileURLs = try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
       return []
     }
-    return subfileURLs
+    return subfileURLs.filter { !$0.isDirectory }
   }
   
   private func findAllSubDirectories(url: URL, currentSubDirectories: [URL] = []) -> [URL] {
@@ -185,8 +176,8 @@ class ImageManager: ObservableObject {
     return creationDate
   }
   
-  private func downSampleImage(path: String, to pointSize: CGSize, scale: CGFloat) -> NSImage {
-    let imageURL = NSURL(fileURLWithPath: path)
+  private func downSampleImage(at url: URL, to pointSize: CGSize, scale: CGFloat) -> NSImage {
+    let imageURL = url as NSURL
     
     let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
     let imageSource = CGImageSourceCreateWithURL(imageURL as CFURL, imageSourceOptions)!
