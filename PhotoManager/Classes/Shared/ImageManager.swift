@@ -53,18 +53,20 @@ class ImageManager: ObservableObject {
         }
         return NSString(string: path).pathExtension == fileType.rawValue
       }
-      DispatchQueue.global(qos: .background).async {
-        self.thumbnailImages = filteredImagePaths.compactMap { path in
-          let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1)
-          return ImageData(image: image)
-        }
-      }
+
       images = filteredImagePaths.compactMap { path in
         guard let image = NSImage(byReferencingFile: path) else {
           return nil
         }
         
         return ImageData(image: image)
+      }
+      
+      DispatchQueue.global(qos: .background).async {
+        self.thumbnailImages = filteredImagePaths.compactMap { path in
+          let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1)
+          return ImageData(image: image)
+        }
       }
       
       sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
@@ -77,15 +79,16 @@ class ImageManager: ObservableObject {
   }
 
   func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
-    guard let directoryUrls = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return } // TODO: Show an error
+    guard let sourceContents = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return } // TODO: Show an error
     
     var subDirectories = [URL]()
-    for url in directoryUrls {
-      print(url)
+    var fileURLs = [URL]()
+    for url in sourceContents {
       if url.isDirectory {
+        subDirectories.append(url)
         subDirectories.append(contentsOf: findAllSubDirectories(url: url))
       } else {
-        subDirectories.append(url)
+        fileURLs.append(url)
       }
     }
     
@@ -94,6 +97,9 @@ class ImageManager: ObservableObject {
       let fileUrls = findSubfiles(for: directory)
       sourceImageUrls.append(contentsOf: fileUrls)
     }
+    
+    sourceImageUrls.append(contentsOf: fileURLs) // Include the files in the base directory
+    
     sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
     
     for sourceImageURL in sourceImageUrls {
@@ -136,19 +142,19 @@ class ImageManager: ObservableObject {
     return subfileURLs
   }
   
-  private func findAllSubDirectories(url: URL) -> [URL] {
+  private func findAllSubDirectories(url: URL, currentSubDirectories: [URL] = []) -> [URL] {
     guard let subURLs = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles) else {
-      return []
+      return currentSubDirectories
       
     } // TODO: Show an error
     var subDirectories = [URL]()
     for url in subURLs {
-      print(url)
       if url.isDirectory {
-        subDirectories.append(contentsOf: findAllSubDirectories(url: url))
+        subDirectories.append(url)
+        subDirectories.append(contentsOf: findAllSubDirectories(url: url, currentSubDirectories: subDirectories))
       }
     }
-    return subURLs
+    return subDirectories
   }
   private func directoryPathComponents(for date: Date) -> [String] {
     // TODO: Allow for more user control with directories and names
