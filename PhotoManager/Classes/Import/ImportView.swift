@@ -16,15 +16,19 @@ struct ImportView: View {
   var body: some View {
     // TODO: Need to present SingleImageViewer when model.shouldShowReviewImages
     VStack() {
-      Spacer()
-      inputView
-      Spacer()
-      buttonStack
-      .disabled(model.importButtonsAreDisabled)
-      Spacer()
-      Spacer()
-      Button("Toggle Debug") {
-        isDebug.toggle()
+      if model.shouldShowReviewImages {
+        SingleImageViewer(model: SingleImageViewModel(images: model.imageManager.images))
+      } else {
+        Spacer()
+        inputView
+        Spacer()
+        buttonStack
+        .disabled(model.importButtonsAreDisabled)
+        Spacer()
+        Spacer()
+        Button("Toggle Debug") {
+          isDebug.toggle()
+        }
       }
     }
     .onAppear {
@@ -35,7 +39,8 @@ struct ImportView: View {
       leading: 50,
       bottom: 50,
       trailing: 50))
-    .frame(width: 800, height: 600, alignment: .center)
+    .frame(maxWidth: .greatestFiniteMagnitude, maxHeight: .greatestFiniteMagnitude, alignment: .center)
+//    .frame(width: 800, height: 600, alignment: .center)
     .blur(radius: model.isLoading ? 5 : 0)
     .overlay(loadingOverlay)
     .alert("Congrats!", isPresented: $model.isPresentingCongratsAlert) {

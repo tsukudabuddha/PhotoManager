@@ -50,7 +50,10 @@ class ImageManager: ObservableObject {
     
     let filteredImageUrls = imageURLs.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
 
-    images = filteredImageUrls.compactMap { return ImageData(image: NSImage(byReferencing: $0)) }
+    images = filteredImageUrls.compactMap {
+      guard let nsImage = NSImage(contentsOf: $0) else { return nil }
+      return ImageData(image: nsImage)
+    }
     
     DispatchQueue.global(qos: .background).async {
       self.thumbnailImages = filteredImageUrls.compactMap { url in

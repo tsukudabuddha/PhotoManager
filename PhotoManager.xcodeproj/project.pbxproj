@@ -27,6 +27,7 @@
 		49A544462838585600FC860E /* FileManager+secureCopyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544452838585600FC860E /* FileManager+secureCopyItem.swift */; };
 		49A5444B2839DABB00FC860E /* URL+isDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A5444A2839DABB00FC860E /* URL+isDirectory.swift */; };
 		49A5444F283B388B00FC860E /* CheckboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A5444E283B388B00FC860E /* CheckboxView.swift */; };
+		49A54451283C9EFC00FC860E /* SingleImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A54450283C9EFC00FC860E /* SingleImageViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		49A544452838585600FC860E /* FileManager+secureCopyItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+secureCopyItem.swift"; sourceTree = "<group>"; };
 		49A5444A2839DABB00FC860E /* URL+isDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+isDirectory.swift"; sourceTree = "<group>"; };
 		49A5444E283B388B00FC860E /* CheckboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckboxView.swift; sourceTree = "<group>"; };
+		49A54450283C9EFC00FC860E /* SingleImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,6 +175,7 @@
 				491E484E2837507D006E1666 /* PhotosView.swift */,
 				491E4850283750B2006E1666 /* PhotosViewModel.swift */,
 				491E485228375176006E1666 /* AllPhotosViewModel.swift */,
+				49A54450283C9EFC00FC860E /* SingleImageViewModel.swift */,
 			);
 			path = PhotoViewer;
 			sourceTree = "<group>";
@@ -367,6 +370,7 @@
 				491E481228372C20006E1666 /* PhotoManagerApp.swift in Sources */,
 				491E485328375176006E1666 /* AllPhotosViewModel.swift in Sources */,
 				491E484828373A42006E1666 /* ImageData.swift in Sources */,
+				49A54451283C9EFC00FC860E /* SingleImageViewModel.swift in Sources */,
 				49A544442838313100FC860E /* ImportViewModel.swift in Sources */,
 				49A5444F283B388B00FC860E /* CheckboxView.swift in Sources */,
 			);

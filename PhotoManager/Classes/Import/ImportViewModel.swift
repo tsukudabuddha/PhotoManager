@@ -96,11 +96,14 @@ class ImportViewModel: ObservableObject {
   }
   
   func reviewImages() {
-    guard let sourceDirectory = sourceDirectory else {
-      return
+    if let sourceDirectory = sourceDirectory {
+      // Start Loading indicator
+      imageManager.loadImages(from: sourceDirectory, fileType: .all)
+    } else if let selectedDrive = selectedDrive {
+      imageManager.loadImages(from: selectedDrive, fileType: .all)
+    } else {
+      return // TODO: Log an error
     }
-    // Start Loading indicator
-    imageManager.loadImages(from: sourceDirectory, fileType: .all)
   }
   
   // MARK: Helpers
