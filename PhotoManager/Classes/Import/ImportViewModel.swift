@@ -81,6 +81,7 @@ class ImportViewModel: ObservableObject {
   func refreshVolumes() {
     availableDrives = mountedVolumes.filter { $0.absoluteString != "file:///" }
     selectedDrive = availableDrives.first
+    updateImportButtonState()
   }
   
   func importJPEG() {

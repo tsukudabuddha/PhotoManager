@@ -20,7 +20,7 @@ struct HomeView: View {
 //        SelectDirectoryView(model: model.selectDirectoryModel)
         Text("OOP")
       } else if model.state == .displayImages {
-        PhotosView(model: PhotosViewModel(images: model.imageManager.images, state: .allPhotos))
+        PhotosView(model: PhotosViewModel(images: model.imageManager.images.map{return $0}, state: .allPhotos))
       } else if model.state == .importMenu {
         ImportView(model: model.importModel)
       }

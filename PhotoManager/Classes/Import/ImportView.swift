@@ -17,7 +17,7 @@ struct ImportView: View {
     // TODO: Need to present SingleImageViewer when model.shouldShowReviewImages
     VStack() {
       if model.shouldShowReviewImages {
-        SingleImageViewer(model: SingleImageViewModel(images: model.imageManager.images))
+        SingleImageViewer(model: SingleImageViewModel(images: model.imageManager.jpegImages)) // TODO: Support RAW
       } else {
         Spacer()
         inputView

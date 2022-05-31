@@ -8,12 +8,14 @@
 import Foundation
 import SwiftUI
 
-struct ImageData: Identifiable {
+struct ImageData: Identifiable, Hashable {
   let id: UUID
   let image: NSImage
+  let fileType: FileType?
   
-  init(image: NSImage, id: UUID = UUID()) {
+  init(id: UUID = UUID(), image: NSImage, fileType: FileType?) {
     self.id = id
     self.image = image
+    self.fileType = fileType
   }
 }

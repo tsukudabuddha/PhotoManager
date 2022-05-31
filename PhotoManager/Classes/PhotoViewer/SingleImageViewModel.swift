@@ -20,12 +20,12 @@ class SingleImageViewModel: ObservableObject {
   }
   
   func goToNextImage() {
-    guard currentlyDisplayedImageIndex + 1 < images.count else { return }
-    currentlyDisplayedImageIndex += 1
+    let shouldIncrement = currentlyDisplayedImageIndex + 1 < images.count
+    currentlyDisplayedImageIndex = shouldIncrement ? currentlyDisplayedImageIndex + 1 : 0
   }
   
   func goToPreviousImage() {
-    guard currentlyDisplayedImageIndex > 0 else { return }
-    currentlyDisplayedImageIndex -= 1
+    let shouldDecrement = currentlyDisplayedImageIndex > 0
+    currentlyDisplayedImageIndex = shouldDecrement ? currentlyDisplayedImageIndex - 1 : images.count - 1
   }
 }

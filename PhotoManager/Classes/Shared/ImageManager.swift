@@ -10,10 +10,23 @@ import SwiftUI
 import CoreGraphics
 
 enum FileType: String {
-  case jpg = "JPG"
-  case raw = "RAF" // TODO: Add support for more raw file types
+  case jpg
+  case raw
   case all
   
+  init?(rawValue: String) {
+    let correctedValue = rawValue.uppercased()
+    switch correctedValue {
+    case "JPG", "JPEG" , "JPE" , "JIF" , "JFIF":
+      self = .jpg
+    case "RAF", "RAW" , "GPR" , "ARW" , "NEF", "DNG":
+      self = .raw
+    default:
+      return nil
+    }
+  }
+  
+  // TODO: Replace? with failable init logic
   static func isValidImageFile(url: URL, fileType: FileType) -> Bool {
     switch fileType {
     case .jpg:
@@ -36,7 +49,10 @@ class ImageManager: ObservableObject {
     return CGFloat(sourceImageUrls.count)
   }
   
-  var images: [ImageData] = []
+  var images: Set<ImageData> = []
+  var jpegImages: [ImageData] {
+    return images.filter { $0.fileType == .jpg }
+  }
   var thumbnailImages: [ImageData] = []
   let fileManager = FileManager.default
   var sourceImageUrls = [URL]()
@@ -49,17 +65,17 @@ class ImageManager: ObservableObject {
     }
     
     let filteredImageUrls = imageURLs.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
-
-    images = filteredImageUrls.compactMap {
+    
+    images = Set(filteredImageUrls.compactMap {
       guard let nsImage = NSImage(contentsOf: $0) else { return nil }
-      return ImageData(image: nsImage)
-    }
+      return ImageData(image: nsImage, fileType: FileType(rawValue: $0.pathExtension))
+    })
     
     DispatchQueue.global(qos: .background).async {
       self.thumbnailImages = filteredImageUrls.compactMap { url in
         if !FileType.isValidImageFile(url: url, fileType: .raw) { // TODO: Support RAW file downsampling
           let image = self.downSampleImage(at: url, to: CGSize(width: 800, height: 800), scale: 1)
-          return ImageData(image: image)
+          return ImageData(image: image, fileType: FileType(rawValue: url.pathExtension))
         } else {
           return nil
         }
@@ -69,7 +85,7 @@ class ImageManager: ObservableObject {
     sourceImageUrls = filteredImageUrls
     imagesHaveLoaded = true
   }
-
+  
   func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
     guard let allSourceFiles = getAllFiles(at: sourceUrl) else { return }
     
