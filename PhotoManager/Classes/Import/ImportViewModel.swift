@@ -16,10 +16,14 @@ class ImportViewModel: ObservableObject {
   @Published var importButtonsAreDisabled: Bool = true
   @Published var isPresentingCongratsAlert: Bool = false
   @Published var isPresentingErrorAlert: Bool = false
-  @Published var storeRAWSeperately: Bool = true
+//  @Published var storeRAWSeperately: Bool = true
   var errorText: String?
   @Published var isLoading: Bool = false
-  @Published var progress: CGFloat = 0
+  @Published var progress: CGFloat = 0 {
+    didSet {
+      print(progress)
+    }
+  }
   var mountedVolumes: [URL] {
     return fileManager.mountedVolumeURLs(includingResourceValuesForKeys: [.volumeIsRemovableKey, .isVolumeKey, .volumeIsRootFileSystemKey], options: .skipHiddenVolumes) ?? []
   }
@@ -80,6 +84,10 @@ class ImportViewModel: ObservableObject {
   
   func importRAW() {
     importImages(fileType: .raw)
+  }
+  
+  func importVideo() {
+    importImages(fileType: .video)
   }
   
   func importAll() {

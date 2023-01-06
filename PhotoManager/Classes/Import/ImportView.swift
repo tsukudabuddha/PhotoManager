@@ -38,11 +38,11 @@ struct ImportView: View {
               
             }
             destinationSelector
-            HStack(alignment: .bottom) {
-              Text("Seperate RAW files from JPEG")
-              Toggle("", isOn: $model.storeRAWSeperately)
-                .toggleStyle(.checkbox)
-            }
+//            HStack(alignment: .bottom) {
+//              Text("Seperate RAW files from JPEG")
+//              Toggle("", isOn: $model.storeRAWSeperately)
+//                .toggleStyle(.checkbox)
+//            }
             
           }.fixedSize(horizontal: true, vertical: false)
         }
@@ -58,6 +58,8 @@ struct ImportView: View {
       Button("Import RAW Only", action: model.importRAW)
         .disabled(model.importButtonsAreDisabled)
       Button("Import All Images", action: model.importAll)
+        .disabled(model.importButtonsAreDisabled)
+      Button("Import All Videos", action: model.importVideo)
         .disabled(model.importButtonsAreDisabled)
       Spacer()
       Spacer()
@@ -87,7 +89,7 @@ struct ImportView: View {
   }
   
   @ViewBuilder private var loadingOverlay: some View {
-    if model.isLoading {
+    if model.isLoading && model.progress <= model.imageManager.total {
       ProgressView("Importing...", value: model.progress, total: model.imageManager.total)
     }
   }

@@ -9,9 +9,10 @@ import Combine
 import SwiftUI
 import CoreGraphics
 
-enum FileType: String {
+enum FileType: String { // TODO: Do these string values matter?
   case jpg = "JPG"
   case raw = "RAF" // TODO: Add support for more raw file types
+  case video = "MP4"
   case all
   
   static func isValidImageFile(url: URL, fileType: FileType) -> Bool {
@@ -20,6 +21,8 @@ enum FileType: String {
       return ["JPG", "JPEG" , "JPE" , "JIF" , "JFIF"].contains(url.pathExtension.uppercased())
     case .raw:
       return ["RAF", "RAW" , "GPR" , "ARW" , "NEF", "DNG"].contains(url.pathExtension.uppercased())
+    case .video:
+      return ["MP4", "MOV"].contains(url.pathExtension.uppercased())
     case .all:
       return FileType.isValidImageFile(url: url, fileType: .raw) || FileType.isValidImageFile(url: url, fileType: .jpg)
     }
@@ -33,6 +36,7 @@ enum FileType: String {
 class ImageManager: ObservableObject {
   @Published var imagesHaveLoaded: Bool = false
   var total: CGFloat {
+    print(sourceImageUrls.count)
     return CGFloat(sourceImageUrls.count)
   }
   
@@ -77,7 +81,9 @@ class ImageManager: ObservableObject {
   }
 
   func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
-    guard let directoryUrls = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else { return } // TODO: Show an error
+    guard let directoryUrls = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
+      return
+    } // TODO: Show an error
     
     var subDirectories = [URL]()
     for url in directoryUrls {
@@ -97,7 +103,7 @@ class ImageManager: ObservableObject {
     sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
     
     for sourceImageURL in sourceImageUrls {
-      print(sourceImageURL)
+//      print(sourceImageURL)
       progressUpdateMethod(sourceImageURL == sourceImageUrls.last ? 0 : 1) // Only add one if not on the last one
       let fileName = sourceImageURL.lastPathComponent
       
@@ -108,6 +114,9 @@ class ImageManager: ObservableObject {
       }
       // Add directory path components. E.g. /Photos -> /Photos/20XX/May
       var toURL = photoLibraryUrl
+      if fileType == .video {
+        toURL = toURL.appendingPathComponent("Videos")
+      }
       for pathComponent in directoryPathComponents(for: date) {
         toURL = toURL.appendingPathComponent(pathComponent)
       }
@@ -120,9 +129,9 @@ class ImageManager: ObservableObject {
       // Include the filename. E.g. /Photos/20XX/May -> /Photos/20XX/May/DSC0000.JPG
       toURL = toURL.appendingPathComponent(fileName)
       
+      self.sourceImageUrls = sourceImageUrls
       _ = !fileManager.secureCopyItem(at: sourceImageURL, to: toURL) // TODO: Handle Errors
     }
-    self.sourceImageUrls = sourceImageUrls
     completion?()
   }
   
