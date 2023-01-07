@@ -11,9 +11,11 @@ import SwiftUI
 struct ImageData: Identifiable {
   let id: UUID
   let image: NSImage
+  let date: Date?
   
-  init(image: NSImage, id: UUID = UUID()) {
+  init(image: NSImage, id: UUID = UUID(), date: Date?) {
     self.id = id
     self.image = image
+    self.date = date
   }
 }

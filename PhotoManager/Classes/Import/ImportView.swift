@@ -43,7 +43,6 @@ struct ImportView: View {
 //              Toggle("", isOn: $model.storeRAWSeperately)
 //                .toggleStyle(.checkbox)
 //            }
-            
           }.fixedSize(horizontal: true, vertical: false)
         }
       }

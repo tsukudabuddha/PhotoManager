@@ -59,16 +59,17 @@ class ImageManager: ObservableObject {
       }
       DispatchQueue.global(qos: .background).async {
         self.thumbnailImages = filteredImagePaths.compactMap { path in
-          let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1)
-          return ImageData(image: image)
+          if let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1) {
+            return ImageData(image: image, date: self.getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)))
+          }
+          return nil
+          
         }
       }
       images = filteredImagePaths.compactMap { path in
-        guard let image = NSImage(byReferencingFile: path) else {
-          return nil
-        }
+        let image = NSImage(byReferencingFile: path)
         
-        return ImageData(image: image)
+        return ImageData(image: image!, date: getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)))
       }
       
       sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
@@ -79,7 +80,7 @@ class ImageManager: ObservableObject {
       print(error)
     }
   }
-
+  
   func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
     guard let directoryUrls = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
       return
@@ -103,7 +104,7 @@ class ImageManager: ObservableObject {
     sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
     
     for sourceImageURL in sourceImageUrls {
-//      print(sourceImageURL)
+      //      print(sourceImageURL)
       progressUpdateMethod(sourceImageURL == sourceImageUrls.last ? 0 : 1) // Only add one if not on the last one
       let fileName = sourceImageURL.lastPathComponent
       
@@ -177,7 +178,7 @@ class ImageManager: ObservableObject {
     try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
   }
   
-  private func getDate(for sourceImageUrl: URL) -> Date? {
+  func getDate(for sourceImageUrl: URL) -> Date? {
     guard let attr = try? fileManager.attributesOfItem(atPath: sourceImageUrl.path),
           let creationDate = (attr[.creationDate] as? NSDate) as Date?
     else {
@@ -188,7 +189,7 @@ class ImageManager: ObservableObject {
     return creationDate
   }
   
-  private func downSampleImage(path: String, to pointSize: CGSize, scale: CGFloat) -> NSImage {
+  private func downSampleImage(path: String, to pointSize: CGSize, scale: CGFloat) -> NSImage? {
     let imageURL = NSURL(fileURLWithPath: path)
     
     let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
@@ -200,8 +201,10 @@ class ImageManager: ObservableObject {
                                       kCGImageSourceShouldCacheImmediately: true,
                                 kCGImageSourceCreateThumbnailWithTransform: true,
                                        kCGImageSourceThumbnailMaxPixelSize: maxDimentionInPixels] as CFDictionary
-    let downsampledImage =     CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampledOptions)!
+    if let downsampledImage =     CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampledOptions) {
+      return NSImage(cgImage: downsampledImage, size: NSSizeFromCGSize(pointSize))
+    }
+    return nil
     
-    return NSImage(cgImage: downsampledImage, size: NSSizeFromCGSize(pointSize))
   }
 }

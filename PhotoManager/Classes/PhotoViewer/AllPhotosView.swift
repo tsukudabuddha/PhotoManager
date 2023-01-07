@@ -9,27 +9,47 @@ import SwiftUI
 
 struct AllPhotosView: View {
   @ObservedObject var model: AllPhotosViewModel
+  var destinationText: String {
+    return "Photo Library:"
+  }
   
   var body: some View {
     ScrollView {
-      LazyVGrid(columns: model.columns, spacing: 16) {
-        ForEach(model.images) { imageData in
-          let image = Image(nsImage: imageData.image)
-          VStack {
-            image
-              .resizable()
-              .scaledToFit()
+      if let images = model.images, images.count > 0 {
+        SingleImageViewer(images: images, index: model.index)
+      } else {
+        destinationSelector
+        LazyVGrid(columns: model.columns, spacing: 16) {
+          ForEach(model.images) { imageData in
+            let image = Image(nsImage: imageData.image)
+            VStack {
+              image
+                .resizable()
+                .scaledToFit()
+            }
+            .contentShape(Rectangle())
+            .frame(minWidth: 100, idealWidth: 250, maxWidth: 300, minHeight: 100, idealHeight: 250, maxHeight: 300, alignment: .center)
+            .onTapGesture {
+              model.handleImageTap(imageData)
+            }
+            
           }
-          .contentShape(Rectangle())
-          .frame(minWidth: 100, idealWidth: 250, maxWidth: 300, minHeight: 100, idealHeight: 250, maxHeight: 300, alignment: .center)
-          .onTapGesture {
-            model.handleImageTap(image)
-          }
-          
         }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
-      .padding()
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      
+    }
+  }
+  
+  @ViewBuilder private var destinationSelector: some View {
+    HStack { // Image Destination
+      HStack {
+        Text(destinationText)
+          .bold()
+        Text(model.sourceDirectory?.path ?? "Select your image folder")
+      }
+      Button("Select", action: model.openPanel)
     }
   }
 }

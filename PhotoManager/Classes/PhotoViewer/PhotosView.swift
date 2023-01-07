@@ -21,7 +21,8 @@ struct PhotosView: View {
       return AnyView(AllPhotosView(model: model.allPhotosViewModel))
     case .singlePhoto:
       guard let selectedImage = model.allPhotosViewModel.selectedImage else { return oop }
-      return AnyView(SingleImageViewer(image: selectedImage))
+//      return AnyView(SingleImageViewer(image: selectedImage, keyPressHandler: <#T##(UInt16) -> Void#>))
+      return AnyView(Text("asdf"))
     }
   }
 }
