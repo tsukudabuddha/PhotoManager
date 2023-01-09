@@ -16,7 +16,7 @@ struct AllPhotosView: View {
   var body: some View {
     ScrollView {
       if let images = model.images, images.count > 0 {
-        SingleImageViewer(images: images, index: model.index)
+        SingleImageViewer(images: images)
       } else {
         destinationSelector
         LazyVGrid(columns: model.columns, spacing: 16) {

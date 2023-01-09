@@ -11,8 +11,16 @@ import SwiftUI
 class ImportViewModel: ObservableObject {
   let userDefaults = UserDefaults.standard
   @ObservedObject var imageManager: ImageManager
-  @Published var sourceDirectory: URL? = nil
-  @Published var destinationDirectory: URL?
+  @Published var sourceDirectory: URL? = nil {
+    didSet {
+      updateImportButtonState()
+    }
+  }
+  @Published var destinationDirectory: URL? {
+    didSet {
+      updateImportButtonState()
+    }
+  }
   @Published var importButtonsAreDisabled: Bool = true
   @Published var isPresentingCongratsAlert: Bool = false
   @Published var isPresentingErrorAlert: Bool = false
