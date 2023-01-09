@@ -7,23 +7,20 @@
 
 import SwiftUI
 
-struct ImagePropertiesView: View {
+struct BottomPropertiesView: View {
   let imageData: ImageData
   let index: Int
   let count: Int
   
+  // TODO: Create a model
+  var dateString: String {
+    return DateFormatter.localizedString(from: imageData.date, dateStyle: .medium, timeStyle: .short)
+  }
+  
   var body: some View {
     VStack {
-      // Image Properties
-      HStack {
-        Text("RAW")
-          .foregroundColor(imageData.keepRAW ? Color.black : Color.gray)
-          .fontWeight(.bold)
-        Text("JPG")
-          .foregroundColor(imageData.keepJPG ? Color.black : Color.gray)
-          .fontWeight(.bold)
-        Text(String(describing: index + 1) + "/" + String(describing: count))
-      }
+      Text(dateString)
+      Spacer()
       Spacer()
       // Tips / Instructions
       VStack(alignment: .leading) {

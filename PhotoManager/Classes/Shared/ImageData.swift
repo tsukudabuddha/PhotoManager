@@ -16,9 +16,9 @@ struct ImageData: Identifiable {
   let path: String
   var keepJPG: Bool
   var keepRAW: Bool
-  let date: Date?
+  let date: Date
   
-  init(path: String, id: UUID = UUID(), date: Date?, keepJPG: Bool = false, keepRAW: Bool = false) {
+  init(path: String, id: UUID = UUID(), date: Date, keepJPG: Bool = false, keepRAW: Bool = false) {
     self.id = id
     self.path = path
     self.date = date

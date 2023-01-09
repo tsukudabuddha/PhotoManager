@@ -67,7 +67,8 @@ class ImageManager: ObservableObject {
 //        }
 //      }
       images = filteredImagePaths.compactMap { path in
-        return ImageData(path: path, date: getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)))
+        guard let date = getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)) else { return nil }
+        return ImageData(path: path, date: date)
       }
       
       sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
