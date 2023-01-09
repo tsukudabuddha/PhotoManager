@@ -10,14 +10,17 @@ import SwiftUI
 
 struct ImageData: Identifiable {
   let id: UUID
-  let image: NSImage
+  var image: NSImage? {
+    return NSImage(byReferencingFile: path)
+  }
+  let path: String
   var keepJPG: Bool
   var keepRAW: Bool
   let date: Date?
   
-  init(image: NSImage, id: UUID = UUID(), date: Date?, keepJPG: Bool = false, keepRAW: Bool = false) {
+  init(path: String, id: UUID = UUID(), date: Date?, keepJPG: Bool = false, keepRAW: Bool = false) {
     self.id = id
-    self.image = image
+    self.path = path
     self.date = date
     self.keepJPG = keepJPG
     self.keepRAW = keepRAW

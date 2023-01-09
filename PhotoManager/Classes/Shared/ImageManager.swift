@@ -57,19 +57,17 @@ class ImageManager: ObservableObject {
         }
         return NSString(string: path).pathExtension == fileType.rawValue
       }
-      DispatchQueue.global(qos: .background).async {
-        self.thumbnailImages = filteredImagePaths.compactMap { path in
-          if let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1) {
-            return ImageData(image: image, date: self.getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)))
-          }
-          return nil
-          
-        }
-      }
+//      DispatchQueue.global(qos: .background).async {
+//        self.thumbnailImages = filteredImagePaths.compactMap { path in
+//          if let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1) {
+//            return ImageData(path: path, date: self.getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)))
+//          }
+//          return nil
+//
+//        }
+//      }
       images = filteredImagePaths.compactMap { path in
-        let image = NSImage(byReferencingFile: path)
-        
-        return ImageData(image: image!, date: getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)))
+        return ImageData(path: path, date: getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)))
       }
       
       sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })

@@ -21,16 +21,17 @@ struct AllPhotosView: View {
         destinationSelector
         LazyVGrid(columns: model.columns, spacing: 16) {
           ForEach(model.images) { imageData in
-            let image = Image(nsImage: imageData.image)
-            VStack {
-              image
-                .resizable()
-                .scaledToFit()
-            }
-            .contentShape(Rectangle())
-            .frame(minWidth: 100, idealWidth: 250, maxWidth: 300, minHeight: 100, idealHeight: 250, maxHeight: 300, alignment: .center)
-            .onTapGesture {
-              model.handleImageTap(imageData)
+            if let nsImage = imageData.image, let image = Image(nsImage: nsImage) {
+              VStack {
+                image
+                  .resizable()
+                  .scaledToFit()
+              }
+              .contentShape(Rectangle())
+              .frame(minWidth: 100, idealWidth: 250, maxWidth: 300, minHeight: 100, idealHeight: 250, maxHeight: 300, alignment: .center)
+              .onTapGesture {
+                model.handleImageTap(imageData)
+              }
             }
             
           }

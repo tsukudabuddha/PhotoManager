@@ -52,7 +52,8 @@ class AllPhotosViewModel: ObservableObject {
   
   func handleImageTap(_ imageData: ImageData) {
     self.selectedImageData = imageData
-    self.selectedImage = Image(nsImage: imageData.image)
+    guard let image = imageData.image else { return } // TODO: Show error
+    self.selectedImage = Image(nsImage: image)
   }
   
   

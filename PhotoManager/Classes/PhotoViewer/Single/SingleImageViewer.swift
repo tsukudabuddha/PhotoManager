@@ -17,13 +17,15 @@ struct SingleImageViewer: View {
   
   var body: some View {
     VStack {
-      Image(nsImage: model.imageData.image)
-        .resizable()
-        .scaledToFit()
-        .frame(maxWidth: 1000, maxHeight: 800)
-        .background(KeyEventHandling(keyPressHandler: model.keyPressHandler))
-      Spacer()
-      ImagePropertiesView(imageData: model.imageData, index: model.index, count: model.images.count)
+      if let nsImage = model.imageData.image {
+        Image(nsImage: nsImage)
+          .resizable()
+          .scaledToFit()
+          .frame(maxWidth: 1000, maxHeight: 800)
+          .background(KeyEventHandling(keyPressHandler: model.keyPressHandler))
+        Spacer()
+        ImagePropertiesView(imageData: model.imageData, index: model.index, count: model.images.count)
+      }
     }
     
   }
