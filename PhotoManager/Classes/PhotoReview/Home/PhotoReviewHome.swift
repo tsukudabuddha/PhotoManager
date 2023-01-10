@@ -41,26 +41,6 @@ struct PhotoReviewHome: View {
         }
         Spacer()
         Spacer()
-        // Grid view of all
-//        LazyVGrid(columns: model.columns, spacing: 16) {
-//          ForEach(model.images) { imageData in
-//            if let nsImage = imageData.image, let image = Image(nsImage: nsImage) {
-//              VStack {
-//                image
-//                  .resizable()
-//                  .scaledToFit()
-//              }
-//              .contentShape(Rectangle())
-//              .frame(minWidth: 100, idealWidth: 250, maxWidth: 300, minHeight: 100, idealHeight: 250, maxHeight: 300, alignment: .center)
-//              .onTapGesture {
-//                model.handleImageTap(imageData)
-//              }
-//            }
-//
-//          }
-//        }
-//        .padding()
-//        .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
       
     }
