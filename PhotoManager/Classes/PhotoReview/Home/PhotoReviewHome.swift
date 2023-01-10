@@ -28,6 +28,10 @@ struct PhotoReviewHome: View {
         DirectorySelector(text: sourceText, path: model.sourceDirectory?.path ?? "") {
           model.openPanel(type: .source)
         }
+        if model.images.count == 0 {
+          Text("There are no photos in the selected directory")
+            .foregroundColor(.red)
+        }
         DirectorySelector(text: destinationText, path: model.destinationDirectory?.path ?? "") {
           model.openPanel(type: .destination)
         }

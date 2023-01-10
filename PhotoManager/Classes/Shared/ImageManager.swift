@@ -107,7 +107,7 @@ class ImageManager: ObservableObject {
     
     // TODO: Handle Errors
     if move {
-      _ = try! fileManager.moveItem(at: sourceImageUrl, to: toURL)
+      _ = try? fileManager.moveItem(at: sourceImageUrl, to: toURL)
     } else {
       _ = !fileManager.secureCopyItem(at: sourceImageUrl, to: toURL)
     }
