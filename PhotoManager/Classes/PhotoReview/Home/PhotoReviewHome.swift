@@ -19,7 +19,8 @@ struct PhotoReviewHome: View {
   @State var showImageViewer: Bool = false
   
   var body: some View {
-    ScrollView {
+    VStack(alignment: .center) {
+      Spacer()
       if let images = model.images, showImageViewer, images.count > 0, let destination = model.destinationDirectory, model.sourceDirectory != nil {
         PhotoReviewSingle(images: images, destinationDirectory: destination, handleBackPress: {
           self.showImageViewer = false
@@ -38,6 +39,8 @@ struct PhotoReviewHome: View {
         Button("Review Images") {
           self.showImageViewer = true
         }
+        Spacer()
+        Spacer()
         // Grid view of all
 //        LazyVGrid(columns: model.columns, spacing: 16) {
 //          ForEach(model.images) { imageData in

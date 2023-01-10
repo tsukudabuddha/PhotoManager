@@ -12,13 +12,13 @@ struct PhotoManagerApp: App {
   var body: some Scene {
     WindowGroup {
       TabView {
-        ImportView(model: ImportViewModel(imageManager: ImageManager()))
-          .tabItem {
-            Text("Quick Import")
-          }
         PhotoReviewHome(model: PhotoReviewHomeModel(images: []))
           .tabItem {
             Text("Review Images")
+          }
+        ImportView(model: ImportViewModel(imageManager: ImageManager()))
+          .tabItem {
+            Text("Quick Import")
           }
       }
       
