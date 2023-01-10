@@ -80,7 +80,40 @@ class ImageManager: ObservableObject {
     }
   }
   
-  func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
+  func saveImage(from sourceImageUrl: URL, to photoLibraryUrl: URL, fileType: FileType, move: Bool, progressUpdateMethod: ((Int) -> Void)? = nil, completion: (() -> Void)? = nil) {
+    let fileName = sourceImageUrl.lastPathComponent
+    
+    guard let date = getDate(for: sourceImageUrl)
+    else {
+      // TODO: No images will be copied, show an error
+      return
+    }
+    // Add directory path components. E.g. /Photos -> /Photos/20XX/May
+    var toURL = photoLibraryUrl
+    if fileType == .video {
+      toURL = toURL.appendingPathComponent("Videos")
+    }
+    for pathComponent in directoryPathComponents(for: date) {
+      toURL = toURL.appendingPathComponent(pathComponent)
+    }
+    let isRaw = (fileType == .raw || fileType == .all) && FileType.isRAWImage(url: sourceImageUrl)
+    if isRaw {
+      toURL = toURL.appendingPathComponent("Raw")
+    }
+    createDirectoryIfNecessary(for: toURL)
+    
+    // Include the filename. E.g. /Photos/20XX/May -> /Photos/20XX/May/DSC0000.JPG
+    toURL = toURL.appendingPathComponent(fileName)
+    
+    // TODO: Handle Errors
+    if move {
+      _ = try! fileManager.moveItem(at: sourceImageUrl, to: toURL)
+    } else {
+      _ = !fileManager.secureCopyItem(at: sourceImageUrl, to: toURL)
+    }
+  }
+  
+  func saveImages(from sourceUrl: URL, to photoLibraryUrl: URL, fileType: FileType, move: Bool, progressUpdateMethod: @escaping (Int) -> Void, completion: (() -> Void)? = nil) {
     guard let directoryUrls = try? fileManager.contentsOfDirectory(at: sourceUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
       return
     } // TODO: Show an error
@@ -103,35 +136,10 @@ class ImageManager: ObservableObject {
     sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
     
     for sourceImageURL in sourceImageUrls {
-      //      print(sourceImageURL)
       progressUpdateMethod(sourceImageURL == sourceImageUrls.last ? 0 : 1) // Only add one if not on the last one
-      let fileName = sourceImageURL.lastPathComponent
-      
-      guard let date = getDate(for: sourceImageURL)
-      else {
-        // TODO: No images will be copied, show an error
-        return
-      }
-      // Add directory path components. E.g. /Photos -> /Photos/20XX/May
-      var toURL = photoLibraryUrl
-      if fileType == .video {
-        toURL = toURL.appendingPathComponent("Videos")
-      }
-      for pathComponent in directoryPathComponents(for: date) {
-        toURL = toURL.appendingPathComponent(pathComponent)
-      }
-      let isRaw = (fileType == .raw || fileType == .all) && FileType.isRAWImage(url: sourceImageURL)
-      if isRaw {
-        toURL = toURL.appendingPathComponent("Raw")
-      }
-      createDirectoryIfNecessary(for: toURL)
-      
-      // Include the filename. E.g. /Photos/20XX/May -> /Photos/20XX/May/DSC0000.JPG
-      toURL = toURL.appendingPathComponent(fileName)
-      
-      self.sourceImageUrls = sourceImageUrls
-      _ = !fileManager.secureCopyItem(at: sourceImageURL, to: toURL) // TODO: Handle Errors
+      saveImage(from: sourceImageURL, to: photoLibraryUrl, fileType: fileType, move: move)
     }
+    self.sourceImageUrls = sourceImageUrls
     completion?()
   }
   

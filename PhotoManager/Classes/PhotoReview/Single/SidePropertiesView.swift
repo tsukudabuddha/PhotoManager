@@ -16,12 +16,12 @@ struct SidePropertiesView: View {
     VStack {
       Spacer()
       VStack(spacing: 16) {
-        VStack {
-          Text("RAW")
-            .foregroundColor(imageData.keepRAW ? Color.primary : Color.gray)
-            .fontWeight(.bold)
+        HStack(spacing: 2) {
           Text("JPG")
             .foregroundColor(imageData.keepJPG ? Color.primary : Color.gray)
+            .fontWeight(.bold)
+          Text("RAW")
+            .foregroundColor(imageData.keepRAW ? Color.primary : Color.gray)
             .fontWeight(.bold)
         }
         Text(String(describing: index + 1) + "/" + String(describing: count))

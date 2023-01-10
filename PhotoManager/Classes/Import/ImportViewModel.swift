@@ -125,6 +125,7 @@ class ImportViewModel: ObservableObject {
         from: from,
         to: destinationDirectory,
         fileType: fileType,
+        move: false,// TODO: Allow user to choose
         progressUpdateMethod: { progressIncrement in
           DispatchQueue.main.async {
             self.progress += CGFloat(progressIncrement)

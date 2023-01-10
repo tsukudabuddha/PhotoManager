@@ -16,7 +16,7 @@ struct PhotoManagerApp: App {
           .tabItem {
             Text("Quick Import")
           }
-        AllPhotosView(model: AllPhotosViewModel(images: []))
+        PhotoReviewHome(model: PhotoReviewHomeModel(images: []))
           .tabItem {
             Text("Review Images")
           }
