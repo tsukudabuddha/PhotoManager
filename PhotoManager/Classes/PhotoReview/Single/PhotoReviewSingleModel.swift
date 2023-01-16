@@ -5,6 +5,7 @@
 //  Created by Andrew Tsukuda on 1/8/23.
 //
 
+import AppKit
 import Foundation
 
 class PhotoReviewSingleModel: ObservableObject {
@@ -14,6 +15,12 @@ class PhotoReviewSingleModel: ObservableObject {
   }
   
   @Published var images: [ImageData]
+  @Published var progress: CGFloat = 0
+  @Published var isLoading: Bool = false
+  var isVertical: Bool {
+    guard let image = imageData.image else { return false }
+    return image.size.width < image.size.height
+  }
   
   let imageManager = ImageManager()
   let destinationDirectory: URL
@@ -63,8 +70,10 @@ class PhotoReviewSingleModel: ObservableObject {
   }
   
   private func savePhotos(move: Bool = false) {
-    // TODO: Show an alert once the saving is done
+    isLoading = true
+    progress = 0
     for image in images {
+      progress += 1
       let fromUrl = URL(fileURLWithPath: image.path)
       if image.keepRAW {
         let filename = String(fromUrl.lastPathComponent.dropLast(4)) + ".RAF" // TODO: Support more RAW formats
@@ -80,5 +89,8 @@ class PhotoReviewSingleModel: ObservableObject {
         }
       }
     }
+    progress = 0
+    isLoading = false
+
   }
 }

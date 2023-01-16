@@ -36,19 +36,28 @@ struct PhotoReviewSingle: View {
           })
         }
       }
-      if let nsImage = model.imageData.image {
+      if let nsImage = model.imageData.image, let window = window {
         HStack {
           Image(nsImage: nsImage)
             .resizable()
             .scaledToFit()
-            .frame(maxWidth: window?.frame.width, maxHeight: (window != nil) ? window!.frame.height - 300 : nil)
             .background(KeyEventHandling(keyPressHandler: model.keyPressHandler))
+            
           SidePropertiesView(imageData: model.imageData, index: model.index, count: model.images.count)
         }
-        Spacer()
+        .frame(minWidth: window.frame.width * 0.6, maxWidth: window.frame.width * 0.8, minHeight: window.frame.height * 0.6, maxHeight: window.frame.height * 0.8)
         BottomPropertiesView(imageData: model.imageData, index: model.index, count: model.images.count)
       }
-    }.padding(EdgeInsets(top: 32, leading: 32, bottom: 32, trailing: 32))
+    }
+    .padding(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
+      .overlay(model.isLoading && model.progress <= CGFloat(model.images.count) ? loadingOverlay : nil)
     
   }
+  
+  @ViewBuilder private var loadingOverlay: some View {
+    // TODO: This is not appearing -- Needs investigation. Might need to move progress to saveImages completion handler
+    ProgressView("Saving Images...", value: model.progress, total: CGFloat(model.images.count))
+  }
 }
+
+
