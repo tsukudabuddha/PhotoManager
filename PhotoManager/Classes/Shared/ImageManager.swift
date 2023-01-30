@@ -47,37 +47,36 @@ class ImageManager: ObservableObject {
   var destinationImagePaths = [String]()
   
   func loadImages(from url: URL, fileType: FileType) {
-    do {
-      let imagePaths = try fileManager.contentsOfDirectory(atPath: url.path)
-      let fullImagePaths = imagePaths.map { return url.path + "/" + $0 }
-      
-      let filteredImagePaths = fullImagePaths.filter { path in
-        if fileType == .all {
-          return true
-        }
-        return NSString(string: path).pathExtension == fileType.rawValue
+    guard let directoryUrls = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
+      return
+    } // TODO: Show an error
+    
+    var subDirectories = [URL]()
+    for url in directoryUrls {
+      if url.isDirectory {
+        subDirectories.append(contentsOf: findAllSubDirectories(url: url))
+      } else {
+        subDirectories.append(url)
       }
-//      DispatchQueue.global(qos: .background).async {
-//        self.thumbnailImages = filteredImagePaths.compactMap { path in
-//          if let image = self.downSampleImage(path: path, to: CGSize(width: 800, height: 800), scale: 1) {
-//            return ImageData(path: path, date: self.getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)))
-//          }
-//          return nil
-//
-//        }
-//      }
-      images = filteredImagePaths.compactMap { path in
-        guard let date = getDate(for: URL(string: path) ?? URL(fileURLWithPath: path)) else { return nil }
-        return ImageData(path: path, date: date)
-      }
-      
-      sourceImageUrls = filteredImagePaths.compactMap({ return URL(fileURLWithPath: $0) })
-      imagesHaveLoaded = true
-    } catch {
-      // TODO: Show an error
-      // failed to read directory – bad permissions, perhaps?
-      print(error)
     }
+    
+    var sourceImageUrls = [URL]()
+    subDirectories.forEach { directory in
+      if directory.isFileURL {
+        sourceImageUrls.append(directory)
+      }
+      
+    }
+    sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
+    images = sourceImageUrls.compactMap { url in
+      guard let date = getDate(for: url) else {
+        return nil
+        
+      }
+      return ImageData(path: url.path, date: date)
+    }
+    imagesHaveLoaded = true
+    self.sourceImageUrls = sourceImageUrls
   }
   
   func saveImage(from sourceImageUrl: URL, to photoLibraryUrl: URL, fileType: FileType, move: Bool, progressUpdateMethod: ((Int) -> Void)? = nil, completion: (() -> Void)? = nil) {
@@ -109,7 +108,8 @@ class ImageManager: ObservableObject {
     if move {
       _ = try? fileManager.moveItem(at: sourceImageUrl, to: toURL)
     } else {
-      _ = !fileManager.secureCopyItem(at: sourceImageUrl, to: toURL)
+      let success = fileManager.secureCopyItem(at: sourceImageUrl, to: toURL)
+      print(success)
     }
   }
   

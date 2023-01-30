@@ -17,6 +17,7 @@ class PhotoReviewSingleModel: ObservableObject {
   @Published var images: [ImageData]
   @Published var progress: CGFloat = 0
   @Published var isLoading: Bool = false
+  @Published var isPhotoManagerDirectory = false
   var isVertical: Bool {
     guard let image = imageData.image else { return false }
     return image.size.width < image.size.height
@@ -61,15 +62,15 @@ class PhotoReviewSingleModel: ObservableObject {
     index = index > 0 ? index - 1 : images.count - 1
   }
   
-  func handleMovePhotos() {
-    savePhotos(move: true)
+  func handleMovePhotos(isPhotoManagerDirectory: Bool) {
+    savePhotos(move: true, isPhotoManagerDirectory: isPhotoManagerDirectory)
   }
   
-  func handleSavePhotos() {
-    savePhotos()
+  func handleSavePhotos(isPhotoManagerDirectory: Bool) {
+    savePhotos(isPhotoManagerDirectory: isPhotoManagerDirectory)
   }
   
-  private func savePhotos(move: Bool = false) {
+  private func savePhotos(move: Bool = false, isPhotoManagerDirectory: Bool) {
     isLoading = true
     progress = 0
     for image in images {
@@ -77,7 +78,8 @@ class PhotoReviewSingleModel: ObservableObject {
       let fromUrl = URL(fileURLWithPath: image.path)
       if image.keepRAW {
         let filename = String(fromUrl.lastPathComponent.dropLast(4)) + ".RAF" // TODO: Support more RAW formats
-        let rawImageUrl = fromUrl.deletingLastPathComponent().appendingPathComponent("Raw").appendingPathComponent(filename)
+        let rawImageUrl = isPhotoManagerDirectory ? fromUrl.deletingLastPathComponent().appendingPathComponent("Raw").appendingPathComponent(filename) : fromUrl.deletingLastPathComponent().appendingPathComponent(filename)
+        
         // TODO: Check if there's a raw file first
         imageManager.saveImage(from: rawImageUrl, to: destinationDirectory, fileType: .raw, move: move) { num in
           print(num) // TODO: What it do?
