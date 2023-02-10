@@ -35,10 +35,7 @@ enum FileType: String { // TODO: Do these string values matter?
 
 class ImageManager: ObservableObject {
   @Published var imagesHaveLoaded: Bool = false
-  var total: CGFloat {
-    print(sourceImageUrls.count)
-    return CGFloat(sourceImageUrls.count)
-  }
+  @Published var total: Int = 0 // Used for quick import loading
   
   var images: [ImageData] = []
   var thumbnailImages: [ImageData] = []
@@ -109,7 +106,7 @@ class ImageManager: ObservableObject {
       _ = try? fileManager.moveItem(at: sourceImageUrl, to: toURL)
     } else {
       let success = fileManager.secureCopyItem(at: sourceImageUrl, to: toURL)
-      print(success)
+//      print(success)
     }
   }
   
@@ -120,7 +117,7 @@ class ImageManager: ObservableObject {
     
     var subDirectories = [URL]()
     for url in directoryUrls {
-      print(url)
+//      print(url)
       if url.isDirectory {
         subDirectories.append(contentsOf: findAllSubDirectories(url: url))
       } else {
@@ -134,6 +131,7 @@ class ImageManager: ObservableObject {
       sourceImageUrls.append(contentsOf: fileUrls)
     }
     sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
+    total = sourceImageUrls.count
     
     for sourceImageURL in sourceImageUrls {
       progressUpdateMethod(sourceImageURL == sourceImageUrls.last ? 0 : 1) // Only add one if not on the last one
@@ -160,7 +158,7 @@ class ImageManager: ObservableObject {
     } // TODO: Show an error
     var subDirectories = [URL]()
     for url in subURLs {
-      print(url)
+//      print(url)
       if url.isDirectory {
         subDirectories.append(contentsOf: findAllSubDirectories(url: url))
       }

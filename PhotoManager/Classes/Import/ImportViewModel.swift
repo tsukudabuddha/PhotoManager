@@ -27,11 +27,7 @@ class ImportViewModel: ObservableObject {
 //  @Published var storeRAWSeperately: Bool = true
   var errorText: String?
   @Published var isLoading: Bool = false
-  @Published var progress: CGFloat = 0 {
-    didSet {
-      print(progress)
-    }
-  }
+  @Published var progress: Int = 0
   var mountedVolumes: [URL] {
     return fileManager.mountedVolumeURLs(includingResourceValuesForKeys: [.volumeIsRemovableKey, .isVolumeKey, .volumeIsRootFileSystemKey], options: .skipHiddenVolumes) ?? []
   }
@@ -128,7 +124,7 @@ class ImportViewModel: ObservableObject {
         move: false,// TODO: Allow user to choose
         progressUpdateMethod: { progressIncrement in
           DispatchQueue.main.async {
-            self.progress += CGFloat(progressIncrement)
+            self.progress += progressIncrement
           }
         },
         completion: { [weak self] in

@@ -89,7 +89,14 @@ struct ImportView: View {
   
   @ViewBuilder private var loadingOverlay: some View {
     if model.isLoading && model.progress <= model.imageManager.total {
-      ProgressView("Importing...", value: model.progress, total: model.imageManager.total)
+      VStack {
+        ProgressView("Importing...", value: CGFloat(model.progress), total: CGFloat(model.imageManager.total))
+        HStack {
+          Text("\(model.progress)/\(model.imageManager.total)")
+          Spacer()
+        }
+        
+      }
     }
   }
   
