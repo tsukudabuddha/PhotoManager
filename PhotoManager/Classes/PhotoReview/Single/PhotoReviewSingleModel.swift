@@ -10,11 +10,11 @@ import Foundation
 
 class PhotoReviewSingleModel: ObservableObject {
   @Published var index: Int = 0
-  var imageData: ImageData {
+  var imageData: ReviewImageData {
     return images[index]
   }
   
-  @Published var images: [ImageData]
+  @Published var images: [ReviewImageData]
   @Published var progress: CGFloat = 0
   @Published var isLoading: Bool = false
   @Published var isPhotoManagerDirectory = false
@@ -26,7 +26,7 @@ class PhotoReviewSingleModel: ObservableObject {
   let imageManager = ImageManager()
   let destinationDirectory: URL
   
-  init?(images: [ImageData], destinationDirectory: URL) {
+  init?(images: [ReviewImageData], destinationDirectory: URL) {
     guard images.count > 0 else { return nil }
     self.images = images
     self.destinationDirectory = destinationDirectory
@@ -39,9 +39,12 @@ class PhotoReviewSingleModel: ObservableObject {
       //    case 3: // F
     case 6: // Z
       images[index].keepJPG = !imageData.keepJPG
+      print(images[index].keepJPG)
       //    case 38: // J
     case 8: // C
       images[index].keepRAW = !imageData.keepRAW
+      print(images[index].keepJPG)
+      
     case 49: // Space
       nextPhoto()
     case 123: // Left Arrow
@@ -75,24 +78,19 @@ class PhotoReviewSingleModel: ObservableObject {
     progress = 0
     for image in images {
       progress += 1
-      let fromUrl = URL(fileURLWithPath: image.path)
-      if image.keepRAW {
-        let filename = String(fromUrl.lastPathComponent.dropLast(4)) + ".RAF" // TODO: Support more RAW formats
-        let rawImageUrl = isPhotoManagerDirectory ? fromUrl.deletingLastPathComponent().appendingPathComponent("Raw").appendingPathComponent(filename) : fromUrl.deletingLastPathComponent().appendingPathComponent(filename)
-        
-        // TODO: Check if there's a raw file first
-        imageManager.saveImage(from: rawImageUrl, to: destinationDirectory, fileType: .raw, move: move) { num in
+      if image.keepRAW, let rawURL = image.rawURL {
+        imageManager.saveImage(from: rawURL, to: destinationDirectory, fileType: .raw, move: move) { num in
           print(num) // TODO: What it do?
         }
       }
-      if image.keepJPG {
-        imageManager.saveImage(from: fromUrl, to: destinationDirectory, fileType: .jpg, move: move) { num in
+      if image.keepJPG, let jpgURL = image.jpgURL {
+        imageManager.saveImage(from: jpgURL, to: destinationDirectory, fileType: .jpg, move: move) { num in
           print(num) // TODO: What it do?
         }
       }
     }
     progress = 0
     isLoading = false
-
+    
   }
 }

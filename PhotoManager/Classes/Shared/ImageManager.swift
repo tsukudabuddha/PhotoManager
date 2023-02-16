@@ -9,41 +9,18 @@ import Combine
 import SwiftUI
 import CoreGraphics
 
-enum FileType: String {
-  case jpg
-  case raw
-  case video
-  case all
-  
-  static func isValidImageFile(url: URL, fileType: FileType) -> Bool {
-    switch fileType {
-    case .jpg:
-      return ["JPG", "JPEG" , "JPE" , "JIF" , "JFIF"].contains(url.pathExtension.uppercased())
-    case .raw:
-      return ["RAF", "RAW" , "GPR" , "ARW" , "NEF", "DNG"].contains(url.pathExtension.uppercased())
-    case .video:
-      return ["MP4", "MOV"].contains(url.pathExtension.uppercased())
-    case .all:
-      return FileType.isValidImageFile(url: url, fileType: .raw) || FileType.isValidImageFile(url: url, fileType: .jpg)
-    }
-  }
-  
-  static func isRAWImage(url: URL) -> Bool {
-    return FileType.isValidImageFile(url: url, fileType: .raw)
-  }
-}
-
 class ImageManager: ObservableObject {
   @Published var imagesHaveLoaded: Bool = false
   @Published var total: Int = 0 // Used for quick import loading
   
-  var images: [ImageData] = []
+  var imagesForReview: [ReviewImageData] = []
   var thumbnailImages: [ImageData] = []
   let fileManager = FileManager.default
   var sourceImageUrls = [URL]()
   var destinationImagePaths = [String]()
   
-  func loadImages(from url: URL, fileType: FileType) {
+  // TODO: Create a func loadImages(for: ImageLoadType) e.g. .review, .view, etc.
+  func loadImagesForReview(from url: URL) {
     guard let directoryUrls = try? fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) else {
       return
     } // TODO: Show an error
@@ -64,16 +41,44 @@ class ImageManager: ObservableObject {
       }
       
     }
-    sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: fileType) }
-    images = sourceImageUrls.compactMap { url in
-      guard let date = getDate(for: url) else {
-        return nil
-        
+    sourceImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: .all) }
+    // Group urls by name (to group raw + jpeg images)
+    let rawImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: .raw) }
+    let jpgImageUrls = sourceImageUrls.filter { FileType.isValidImageFile(url: $0, fileType: .jpg) }
+    
+    let allFileNamesWithPossibleDuplicates = sourceImageUrls.map { $0.lastPathComponent.dropLast(4)} // TODO: Make sure everything has file extension of length 3 or else this will cause issues
+    let allFileNames = Set(allFileNamesWithPossibleDuplicates.map { String($0) })
+    
+    imagesForReview = []
+    for fileName in allFileNames {
+      let jpgUrl = jpgImageUrls.first { $0.lastPathComponent.dropLast(4) == fileName }
+      let rawUrl = rawImageUrls.first { $0.lastPathComponent.dropLast(4) == fileName }
+      
+      var date: Date
+      if let jpgUrl = jpgUrl, let jpgDate = getDate(for: jpgUrl) {
+        date = jpgDate
+      } else if let rawUrl = rawUrl, let rawDate = getDate(for: rawUrl) {
+        date = rawDate
+      } else {
+        return // TODO: Show error creating date
       }
-      return ImageData(path: url.path, date: date)
+      guard let imageData = ReviewImageData(rawURL: rawUrl, jpgURL: jpgUrl, date: date) else {
+        return
+        // Show an error
+      }
+      imagesForReview.append(imageData)
     }
-    imagesHaveLoaded = true
-    self.sourceImageUrls = sourceImageUrls
+    
+    
+    
+//    imagesForReview = sourceImageUrls.compactMap { url in
+//      guard let date = getDate(for: url) else {
+//        return nil
+//      }
+//      return ReviewImageData(rawPath: <#T##String?#>, jpgPath: <#T##String?#>, date: date)
+//    }
+//    imagesHaveLoaded = true
+//    self.sourceImageUrls = sourceImageUrls
   }
   
   func saveImage(from sourceImageUrl: URL, to photoLibraryUrl: URL, fileType: FileType, move: Bool, progressUpdateMethod: ((Int) -> Void)? = nil, completion: (() -> Void)? = nil) {

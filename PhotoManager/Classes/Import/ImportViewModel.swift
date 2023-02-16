@@ -48,11 +48,6 @@ class ImportViewModel: ObservableObject {
     self.destinationDirectory = URL(string: (userDefaults.object(forKey: "defaultImageFolder") as? String) ?? "")
   }
   
-  enum DirectoryType {
-    case source
-    case destination
-  }
-  
   func openPanel(for directory: DirectoryType) {
     let panel = NSOpenPanel()
     panel.allowsMultipleSelection = false

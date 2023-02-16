@@ -16,7 +16,7 @@ struct PhotoReviewSingle: View {
   
   @State var isModalPresented: Bool = false
   
-  init?(images: [ImageData], destinationDirectory: URL, handleBackPress: @escaping () -> Void) {
+  init?(images: [ReviewImageData], destinationDirectory: URL, handleBackPress: @escaping () -> Void) {
     guard let model = PhotoReviewSingleModel(images: images, destinationDirectory: destinationDirectory) else { return nil }
     self.model = model
     self.handleBackPress = handleBackPress

@@ -8,21 +8,46 @@
 import Foundation
 import SwiftUI
 
-struct ImageData: Identifiable {
+class ImageData: Identifiable {
   let id: UUID
   var image: NSImage? {
     return NSImage(byReferencingFile: path)
   }
   let path: String
-  var keepJPG: Bool
-  var keepRAW: Bool
   let date: Date
   
-  init(path: String, id: UUID = UUID(), date: Date, keepJPG: Bool = false, keepRAW: Bool = false) {
+  init(path: String, id: UUID = UUID(), date: Date) {
     self.id = id
     self.path = path
     self.date = date
+  }
+}
+
+class ReviewImageData: Identifiable, ObservableObject {
+  let rawURL: URL?
+  let jpgURL: URL?
+  var image: NSImage? {
+    if let url = jpgURL {
+      return NSImage(contentsOf: url)
+    } else if let url = rawURL {
+      return NSImage(contentsOf: url)
+    } else {
+      return nil
+    }
+    
+  }
+  @Published var keepJPG: Bool
+  @Published var keepRAW: Bool
+  let date: Date
+  
+  init?(rawURL: URL?, jpgURL: URL?, keepJPG: Bool = false, keepRAW: Bool = false, date: Date) {
+    if jpgURL == nil && rawURL == nil {
+      return nil
+    }
+    self.rawURL = rawURL
+    self.jpgURL = jpgURL
     self.keepJPG = keepJPG
     self.keepRAW = keepRAW
+    self.date = date
   }
 }

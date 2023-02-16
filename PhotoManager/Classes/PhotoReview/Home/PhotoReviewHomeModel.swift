@@ -8,28 +8,26 @@
 import SwiftUI
 
 class PhotoReviewHomeModel: ObservableObject {
-  let userDefaults = UserDefaults.standard
+  @Published var destinationDirectory: URL? = nil
+  @Published var imageManager = ImageManager()
+  @Published var index = 0
+  @Published var selectedImage: Image?
+  @Published var selectedImageData: ImageData?
   
-  enum DirectoryType {
-    case source
-    case destination
-  }
+  let userDefaults = UserDefaults.standard
   
   // TODO: Move this to a DirectoryManager or something + reuse
   @Published var sourceDirectory: URL? = nil {
     didSet {
       if let directory = sourceDirectory {
-        imageManager.loadImages(from: directory, fileType: .jpg)
-        images = imageManager.images.sorted(by: { $0.date < $1.date })
+//        imageManager.loadImages(from: directory, fileType: .jpg)
+        imageManager.loadImagesForReview(from: directory)
+        images = imageManager.imagesForReview.sorted(by: { $0.date < $1.date })
       }
     }
   }
   
-  @Published var destinationDirectory: URL? = nil 
   
-  @Published var imageManager = ImageManager()
-  
-  @Published var index = 0
   
   func openPanel(type: DirectoryType) {
     let panel = NSOpenPanel()
@@ -50,18 +48,11 @@ class PhotoReviewHomeModel: ObservableObject {
       
     }
   }
-  var columns: [GridItem] = [
-    GridItem(.flexible()),
-    GridItem(.flexible()),
-    GridItem(.flexible()),
-  ]
   
   let height: CGFloat = 150
-  var images: [ImageData]
-  @Published var selectedImage: Image?
-  @Published var selectedImageData: ImageData?
+  var images: [ReviewImageData]
   
-  init(images: [ImageData]) {
+  init(images: [ReviewImageData]) {
     self.images = images
     self.destinationDirectory = URL(string: (userDefaults.object(forKey: UserDefaultKeys.reviewDestinationDirectory.rawValue) as? String) ?? "")
     self.sourceDirectory = URL(string: (userDefaults.object(forKey: UserDefaultKeys.reviewSourceDirectory.rawValue) as? String) ?? "")

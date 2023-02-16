@@ -31,6 +31,8 @@
 		49A5444B2839DABB00FC860E /* URL+isDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A5444A2839DABB00FC860E /* URL+isDirectory.swift */; };
 		49B86EA4299E6F2F00CD531A /* DirectorySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B86EA3299E6F2F00CD531A /* DirectorySelector.swift */; };
 		49B86EA6299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B86EA5299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift */; };
+		49B86EAC299E751C00CD531A /* FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B86EAB299E751C00CD531A /* FileType.swift */; };
+		49B86EAF299E780400CD531A /* DirectoryType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B86EAE299E780400CD531A /* DirectoryType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +81,8 @@
 		49A5444A2839DABB00FC860E /* URL+isDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+isDirectory.swift"; sourceTree = "<group>"; };
 		49B86EA3299E6F2F00CD531A /* DirectorySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectorySelector.swift; sourceTree = "<group>"; };
 		49B86EA5299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+createDirectoryIfNecessary.swift"; sourceTree = "<group>"; };
+		49B86EAB299E751C00CD531A /* FileType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileType.swift; sourceTree = "<group>"; };
+		49B86EAE299E780400CD531A /* DirectoryType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectoryType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +134,7 @@
 		491E481028372C20006E1666 /* PhotoManager */ = {
 			isa = PBXGroup;
 			children = (
+				49B86EAD299E77FA00CD531A /* Enums */,
 				49A544482838756F00FC860E /* Classes */,
 				491E481128372C20006E1666 /* PhotoManagerApp.swift */,
 				491E481528372C21006E1666 /* Assets.xcassets */,
@@ -228,12 +233,21 @@
 		49A544492838790500FC860E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				492B5C2E296BEED500E56553 /* Keys.swift */,
 				491E4845283737EF006E1666 /* ImageManager.swift */,
 				491E484728373A42006E1666 /* ImageData.swift */,
-				492B5C2E296BEED500E56553 /* Keys.swift */,
 				49B86EA3299E6F2F00CD531A /* DirectorySelector.swift */,
 			);
 			path = Shared;
+			sourceTree = "<group>";
+		};
+		49B86EAD299E77FA00CD531A /* Enums */ = {
+			isa = PBXGroup;
+			children = (
+				49B86EAB299E751C00CD531A /* FileType.swift */,
+				49B86EAE299E780400CD531A /* DirectoryType.swift */,
+			);
+			path = Enums;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -374,9 +388,11 @@
 				49A544462838585600FC860E /* FileManager+secureCopyItem.swift in Sources */,
 				491E4846283737EF006E1666 /* ImageManager.swift in Sources */,
 				492B5C2F296BEED500E56553 /* Keys.swift in Sources */,
+				49B86EAC299E751C00CD531A /* FileType.swift in Sources */,
 				49398CC9296B813C00B324D0 /* PhotoReviewSingleModel.swift in Sources */,
 				49A544422838308400FC860E /* ImportView.swift in Sources */,
 				49A5444B2839DABB00FC860E /* URL+isDirectory.swift in Sources */,
+				49B86EAF299E780400CD531A /* DirectoryType.swift in Sources */,
 				491E48442837337D006E1666 /* PhotoReviewHome.swift in Sources */,
 				492B5C26296BD42500E56553 /* DateUtility.swift in Sources */,
 				491E481228372C20006E1666 /* PhotoManagerApp.swift in Sources */,
@@ -557,7 +573,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = tsukudabuddha.PhotoManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -585,7 +601,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = tsukudabuddha.PhotoManager;
 				PRODUCT_NAME = "$(TARGET_NAME)";

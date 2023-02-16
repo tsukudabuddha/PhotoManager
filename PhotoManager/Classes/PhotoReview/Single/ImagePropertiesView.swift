@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct BottomPropertiesView: View {
-  let imageData: ImageData
+  let imageData: ReviewImageData
   let index: Int
   let count: Int
   
