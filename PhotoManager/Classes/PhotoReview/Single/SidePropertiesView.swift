@@ -11,6 +11,7 @@ struct SidePropertiesView: View {
   let imageData: ReviewImageData
   let index: Int
   let count: Int
+  let update: Bool // Hack to update JPG/ RAW text
   
   var body: some View {
     VStack {

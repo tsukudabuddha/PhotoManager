@@ -23,7 +23,7 @@ class ImageData: Identifiable {
   }
 }
 
-class ReviewImageData: Identifiable, ObservableObject {
+class ReviewImageData: Identifiable {
   let rawURL: URL?
   let jpgURL: URL?
   var image: NSImage? {
@@ -36,8 +36,8 @@ class ReviewImageData: Identifiable, ObservableObject {
     }
     
   }
-  @Published var keepJPG: Bool
-  @Published var keepRAW: Bool
+  var keepJPG: Bool
+  var keepRAW: Bool
   let date: Date
   
   init?(rawURL: URL?, jpgURL: URL?, keepJPG: Bool = false, keepRAW: Bool = false, date: Date) {

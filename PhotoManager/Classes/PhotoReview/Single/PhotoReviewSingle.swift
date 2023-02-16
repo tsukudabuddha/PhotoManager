@@ -43,7 +43,7 @@ struct PhotoReviewSingle: View {
             .scaledToFit()
             .background(KeyEventHandling(keyPressHandler: model.keyPressHandler))
             
-          SidePropertiesView(imageData: model.imageData, index: model.index, count: model.images.count)
+          SidePropertiesView(imageData: model.imageData, index: model.index, count: model.images.count, update: model.updateImageData)
         }
         .frame(minWidth: window.frame.width * 0.6, maxWidth: window.frame.width * 0.8, minHeight: window.frame.height * 0.6, maxHeight: window.frame.height * 0.8)
         BottomPropertiesView(imageData: model.imageData, index: model.index, count: model.images.count)

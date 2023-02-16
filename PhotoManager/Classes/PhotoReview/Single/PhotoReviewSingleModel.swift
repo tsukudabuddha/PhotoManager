@@ -18,6 +18,7 @@ class PhotoReviewSingleModel: ObservableObject {
   @Published var progress: CGFloat = 0
   @Published var isLoading: Bool = false
   @Published var isPhotoManagerDirectory = false
+  @Published var updateImageData = false // Hack to force ui to update when imageData is updated (keepRaw/ keepJPG)
   var isVertical: Bool {
     guard let image = imageData.image else { return false }
     return image.size.width < image.size.height
@@ -39,12 +40,11 @@ class PhotoReviewSingleModel: ObservableObject {
       //    case 3: // F
     case 6: // Z
       images[index].keepJPG = !imageData.keepJPG
-      print(images[index].keepJPG)
+      updateImageData = !updateImageData
       //    case 38: // J
     case 8: // C
       images[index].keepRAW = !imageData.keepRAW
-      print(images[index].keepJPG)
-      
+      updateImageData = !updateImageData
     case 49: // Space
       nextPhoto()
     case 123: // Left Arrow
