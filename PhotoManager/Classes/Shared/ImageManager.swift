@@ -9,10 +9,10 @@ import Combine
 import SwiftUI
 import CoreGraphics
 
-enum FileType: String { // TODO: Do these string values matter?
-  case jpg = "JPG"
-  case raw = "RAF" // TODO: Add support for more raw file types
-  case video = "MP4"
+enum FileType: String {
+  case jpg
+  case raw
+  case video
   case all
   
   static func isValidImageFile(url: URL, fileType: FileType) -> Bool {
@@ -96,7 +96,7 @@ class ImageManager: ObservableObject {
     if isRaw {
       toURL = toURL.appendingPathComponent("Raw")
     }
-    createDirectoryIfNecessary(for: toURL)
+    fileManager.createDirectoryIfNecessary(for: toURL)
     
     // Include the filename. E.g. /Photos/20XX/May -> /Photos/20XX/May/DSC0000.JPG
     toURL = toURL.appendingPathComponent(fileName)
@@ -106,7 +106,6 @@ class ImageManager: ObservableObject {
       _ = try? fileManager.moveItem(at: sourceImageUrl, to: toURL)
     } else {
       let success = fileManager.secureCopyItem(at: sourceImageUrl, to: toURL)
-//      print(success)
     }
   }
   
@@ -117,7 +116,6 @@ class ImageManager: ObservableObject {
     
     var subDirectories = [URL]()
     for url in directoryUrls {
-//      print(url)
       if url.isDirectory {
         subDirectories.append(contentsOf: findAllSubDirectories(url: url))
       } else {
@@ -158,7 +156,6 @@ class ImageManager: ObservableObject {
     } // TODO: Show an error
     var subDirectories = [URL]()
     for url in subURLs {
-//      print(url)
       if url.isDirectory {
         subDirectories.append(contentsOf: findAllSubDirectories(url: url))
       }
@@ -176,11 +173,6 @@ class ImageManager: ObservableObject {
     dateFormatter.dateFormat = "MMM"
     pathComponents.append(dateFormatter.string(from: date))
     return pathComponents
-  }
-  
-  // TODO: Move to FileManager extension?
-  private func createDirectoryIfNecessary(for url: URL) {
-    try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
   }
   
   func getDate(for sourceImageUrl: URL) -> Date? {

@@ -46,29 +46,3 @@ struct PhotoReviewHome: View {
     }
   }
 }
-
-// TODO: Move to it's own shared file
-
-struct DirectorySelector: View {
-  var text: String
-  var path: String?
-  var selectText: String
-  var buttonAction: () -> Void
-  
-  init(text: String, path: String, selectText: String = "Select your image folder", buttonAction: @escaping () -> Void) {
-    self.text = text
-    self.path = path
-    self.selectText = selectText
-    self.buttonAction = buttonAction
-  }
-  var body: some View {
-    HStack { // Image Destination
-      HStack {
-        Text(text)
-          .bold()
-        Text(path ?? selectText)
-      }
-      Button("Select", action: buttonAction)
-    }
-  }
-}

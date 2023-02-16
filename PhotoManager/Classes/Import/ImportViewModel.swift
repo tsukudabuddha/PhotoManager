@@ -101,7 +101,7 @@ class ImportViewModel: ObservableObject {
   // MARK: Helpers
   private func importImages(fileType: FileType) {
     guard let destinationDirectory = destinationDirectory else {
-      errorText = "missing destination directory" // TODO: Localize
+      errorText = "missing destination directory"
       isPresentingErrorAlert = true
       return
     }
@@ -112,7 +112,7 @@ class ImportViewModel: ObservableObject {
     } else if let sourceDirectory = sourceDirectory {
       from = sourceDirectory
     } else {
-      errorText = "missing source directory" // TODO: Localize
+      errorText = "missing source directory"
       isPresentingErrorAlert = true
       return
     }

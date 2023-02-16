@@ -29,6 +29,8 @@
 		49A544442838313100FC860E /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544432838313100FC860E /* ImportViewModel.swift */; };
 		49A544462838585600FC860E /* FileManager+secureCopyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544452838585600FC860E /* FileManager+secureCopyItem.swift */; };
 		49A5444B2839DABB00FC860E /* URL+isDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A5444A2839DABB00FC860E /* URL+isDirectory.swift */; };
+		49B86EA4299E6F2F00CD531A /* DirectorySelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B86EA3299E6F2F00CD531A /* DirectorySelector.swift */; };
+		49B86EA6299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B86EA5299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +77,8 @@
 		49A544432838313100FC860E /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
 		49A544452838585600FC860E /* FileManager+secureCopyItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+secureCopyItem.swift"; sourceTree = "<group>"; };
 		49A5444A2839DABB00FC860E /* URL+isDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+isDirectory.swift"; sourceTree = "<group>"; };
+		49B86EA3299E6F2F00CD531A /* DirectorySelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DirectorySelector.swift; sourceTree = "<group>"; };
+		49B86EA5299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+createDirectoryIfNecessary.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +163,7 @@
 				49A544452838585600FC860E /* FileManager+secureCopyItem.swift */,
 				49A5444A2839DABB00FC860E /* URL+isDirectory.swift */,
 				492B5C25296BD42500E56553 /* DateUtility.swift */,
+				49B86EA5299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift */,
 			);
 			path = Utilites;
 			sourceTree = "<group>";
@@ -226,6 +231,7 @@
 				491E4845283737EF006E1666 /* ImageManager.swift */,
 				491E484728373A42006E1666 /* ImageData.swift */,
 				492B5C2E296BEED500E56553 /* Keys.swift */,
+				49B86EA3299E6F2F00CD531A /* DirectorySelector.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -375,7 +381,9 @@
 				492B5C26296BD42500E56553 /* DateUtility.swift in Sources */,
 				491E481228372C20006E1666 /* PhotoManagerApp.swift in Sources */,
 				492B5C28296BD99A00E56553 /* SidePropertiesView.swift in Sources */,
+				49B86EA6299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift in Sources */,
 				491E485328375176006E1666 /* PhotoReviewHomeModel.swift in Sources */,
+				49B86EA4299E6F2F00CD531A /* DirectorySelector.swift in Sources */,
 				492B5C31296CE7EC00E56553 /* SaveModalView.swift in Sources */,
 				491E484828373A42006E1666 /* ImageData.swift in Sources */,
 				49A544442838313100FC860E /* ImportViewModel.swift in Sources */,
