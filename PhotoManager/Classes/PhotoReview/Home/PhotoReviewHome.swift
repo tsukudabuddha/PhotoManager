@@ -21,8 +21,8 @@ struct PhotoReviewHome: View {
   var body: some View {
     VStack(alignment: .center) {
       Spacer()
-      if let images = model.images, showImageViewer, images.count > 0, let destination = model.destinationDirectory, model.sourceDirectory != nil {
-        PhotoReviewSingle(images: images, destinationDirectory: destination, handleBackPress: {
+      if showImageViewer, model.images.count > 0, let destination = model.destinationDirectory, model.sourceDirectory != nil {
+        PhotoReviewSingle(images: model.images, destinationDirectory: destination, handleBackPress: {
           self.showImageViewer = false
         })
       } else {
