@@ -25,6 +25,7 @@ struct BottomPropertiesView: View {
       // Tips / Instructions
       VStack(alignment: .leading) {
         Text("Press \"Z\" to flag to save the JPG file")
+        Text("Press \"X\" to flag to save both JPG + RAW files")
         Text("Press \"C\" to flag to save the RAW file")
         Text("Press the space bar to go to the next image")
         Text("You can also navigate using the arrow keys")

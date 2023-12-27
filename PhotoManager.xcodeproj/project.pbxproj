@@ -210,20 +210,20 @@
 			path = PhotoReview;
 			sourceTree = "<group>";
 		};
-		49A544472838717400FC860E /* Import */ = {
+		49A544472838717400FC860E /* QuickImport */ = {
 			isa = PBXGroup;
 			children = (
 				49A544412838308400FC860E /* ImportView.swift */,
 				49A544432838313100FC860E /* ImportViewModel.swift */,
 			);
-			path = Import;
+			path = QuickImport;
 			sourceTree = "<group>";
 		};
 		49A544482838756F00FC860E /* Classes */ = {
 			isa = PBXGroup;
 			children = (
 				49A544492838790500FC860E /* Shared */,
-				49A544472838717400FC860E /* Import */,
+				49A544472838717400FC860E /* QuickImport */,
 				49A5444028382FC700FC860E /* PhotoReview */,
 				491E4849283740AA006E1666 /* Utilites */,
 			);

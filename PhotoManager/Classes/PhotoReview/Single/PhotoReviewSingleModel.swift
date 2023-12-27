@@ -38,18 +38,22 @@ class PhotoReviewSingleModel: ObservableObject {
   func keyPressHandler(keyCode: UInt16) {
     switch(keyCode) {
       //    case 3: // F
-    case 6: // Z
+    case 6: // Z - toggle keep jpg
       images[index].keepJPG = !imageData.keepJPG
       updateImageData = !updateImageData
+    case 7: // X - keep both
+      images[index].keepJPG = true
+      images[index].keepRAW = true
+      updateImageData = !updateImageData
       //    case 38: // J
-    case 8: // C
+    case 8: // C - toggle keep raw
       images[index].keepRAW = !imageData.keepRAW
       updateImageData = !updateImageData
-    case 49: // Space
+    case 49: // Space - next
       nextPhoto()
-    case 123: // Left Arrow
+    case 123: // Left Arrow - prev
       previousPhoto()
-    case 124: // Right Arrow
+    case 124: // Right Arrow - next
       nextPhoto()
     default:
       print(keyCode)
