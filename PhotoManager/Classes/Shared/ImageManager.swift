@@ -53,6 +53,7 @@ class ImageManager: ObservableObject {
     for fileName in allFileNames {
       let jpgUrl = jpgImageUrls.first { $0.lastPathComponent.dropLast(4) == fileName }
       let rawUrl = rawImageUrls.first { $0.lastPathComponent.dropLast(4) == fileName }
+      let exifData = fetchEXIFData(from: jpgUrl)
       
       var date: Date
       if let jpgUrl = jpgUrl, let jpgDate = getDate(for: jpgUrl) {
@@ -62,23 +63,12 @@ class ImageManager: ObservableObject {
       } else {
         return // TODO: Show error creating date
       }
-      guard let imageData = ReviewImageData(rawURL: rawUrl, jpgURL: jpgUrl, date: date) else {
+      guard let imageData = ReviewImageData(rawURL: rawUrl, jpgURL: jpgUrl, date: date, exifData: exifData) else {
         return
-        // Show an error
+        // TODO: Show an error
       }
       imagesForReview.append(imageData)
     }
-    
-    
-    
-//    imagesForReview = sourceImageUrls.compactMap { url in
-//      guard let date = getDate(for: url) else {
-//        return nil
-//      }
-//      return ReviewImageData(rawPath: <#T##String?#>, jpgPath: <#T##String?#>, date: date)
-//    }
-//    imagesHaveLoaded = true
-//    self.sourceImageUrls = sourceImageUrls
   }
   
   func saveImage(from sourceImageUrl: URL, to photoLibraryUrl: URL, fileType: FileType, move: Bool, progressUpdateMethod: ((Int) -> Void)? = nil, completion: (() -> Void)? = nil) {

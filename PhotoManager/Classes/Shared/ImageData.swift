@@ -39,8 +39,14 @@ class ReviewImageData: Identifiable {
   var keepJPG: Bool
   var keepRAW: Bool
   let date: Date
+  let exifData: EXIFData?
   
-  init?(rawURL: URL?, jpgURL: URL?, keepJPG: Bool = false, keepRAW: Bool = false, date: Date) {
+  init?(rawURL: URL?,
+        jpgURL: URL?,
+        keepJPG: Bool = false,
+        keepRAW: Bool = false,
+        date: Date,
+        exifData: EXIFData?) {
     if jpgURL == nil && rawURL == nil {
       return nil
     }
@@ -49,5 +55,6 @@ class ReviewImageData: Identifiable {
     self.keepJPG = keepJPG
     self.keepRAW = keepRAW
     self.date = date
+    self.exifData = exifData
   }
 }

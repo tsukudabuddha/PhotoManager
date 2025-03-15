@@ -15,6 +15,22 @@ struct SidePropertiesView: View {
   
   var body: some View {
     VStack {
+      if let exifData = imageData.exifData {
+        VStack(alignment: .leading) {
+          if let iso = exifData.isoString {
+            Text(iso)
+          }
+          if let focalLength = exifData.focalLengthString {
+            Text(focalLength)
+          }
+          if let aperture = exifData.apertureString {
+            Text(aperture)
+          }
+          if let shutterSpeed = exifData.shutterSpeedString {
+            Text(shutterSpeed)
+          }
+        }.foregroundStyle(.gray)
+      }
       Spacer()
       VStack(spacing: 16) {
         HStack(spacing: 2) {

@@ -24,6 +24,8 @@
 		492B5C31296CE7EC00E56553 /* SaveModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 492B5C30296CE7EC00E56553 /* SaveModalView.swift */; };
 		49398CC7296B7E9A00B324D0 /* ImagePropertiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49398CC6296B7E9A00B324D0 /* ImagePropertiesView.swift */; };
 		49398CC9296B813C00B324D0 /* PhotoReviewSingleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49398CC8296B813C00B324D0 /* PhotoReviewSingleModel.swift */; };
+		4942B7392D85535C0062A1EC /* fetchEXIFData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4942B7382D8553530062A1EC /* fetchEXIFData.swift */; };
+		4942B73B2D8563C50062A1EC /* EXIFData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4942B73A2D8563BE0062A1EC /* EXIFData.swift */; };
 		496E013029691C7C00543A18 /* KeyEventHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496E012F29691C7C00543A18 /* KeyEventHandling.swift */; };
 		49A544422838308400FC860E /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544412838308400FC860E /* ImportView.swift */; };
 		49A544442838313100FC860E /* ImportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49A544432838313100FC860E /* ImportViewModel.swift */; };
@@ -74,6 +76,8 @@
 		492B5C30296CE7EC00E56553 /* SaveModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveModalView.swift; sourceTree = "<group>"; };
 		49398CC6296B7E9A00B324D0 /* ImagePropertiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePropertiesView.swift; sourceTree = "<group>"; };
 		49398CC8296B813C00B324D0 /* PhotoReviewSingleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoReviewSingleModel.swift; sourceTree = "<group>"; };
+		4942B7382D8553530062A1EC /* fetchEXIFData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fetchEXIFData.swift; sourceTree = "<group>"; };
+		4942B73A2D8563BE0062A1EC /* EXIFData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EXIFData.swift; sourceTree = "<group>"; };
 		496E012F29691C7C00543A18 /* KeyEventHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEventHandling.swift; sourceTree = "<group>"; };
 		49A544412838308400FC860E /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		49A544432838313100FC860E /* ImportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportViewModel.swift; sourceTree = "<group>"; };
@@ -163,6 +167,7 @@
 		491E4849283740AA006E1666 /* Utilites */ = {
 			isa = PBXGroup;
 			children = (
+				4942B7382D8553530062A1EC /* fetchEXIFData.swift */,
 				496E012F29691C7C00543A18 /* KeyEventHandling.swift */,
 				491E484A283740BC006E1666 /* Publisher+didSet.swift */,
 				49A544452838585600FC860E /* FileManager+secureCopyItem.swift */,
@@ -233,6 +238,7 @@
 		49A544492838790500FC860E /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				4942B73A2D8563BE0062A1EC /* EXIFData.swift */,
 				492B5C2E296BEED500E56553 /* Keys.swift */,
 				491E4845283737EF006E1666 /* ImageManager.swift */,
 				491E484728373A42006E1666 /* ImageData.swift */,
@@ -388,6 +394,7 @@
 				49A544462838585600FC860E /* FileManager+secureCopyItem.swift in Sources */,
 				491E4846283737EF006E1666 /* ImageManager.swift in Sources */,
 				492B5C2F296BEED500E56553 /* Keys.swift in Sources */,
+				4942B73B2D8563C50062A1EC /* EXIFData.swift in Sources */,
 				49B86EAC299E751C00CD531A /* FileType.swift in Sources */,
 				49398CC9296B813C00B324D0 /* PhotoReviewSingleModel.swift in Sources */,
 				49A544422838308400FC860E /* ImportView.swift in Sources */,
@@ -399,6 +406,7 @@
 				492B5C28296BD99A00E56553 /* SidePropertiesView.swift in Sources */,
 				49B86EA6299E713300CD531A /* FileManager+createDirectoryIfNecessary.swift in Sources */,
 				491E485328375176006E1666 /* PhotoReviewHomeModel.swift in Sources */,
+				4942B7392D85535C0062A1EC /* fetchEXIFData.swift in Sources */,
 				49B86EA4299E6F2F00CD531A /* DirectorySelector.swift in Sources */,
 				492B5C31296CE7EC00E56553 /* SaveModalView.swift in Sources */,
 				491E484828373A42006E1666 /* ImageData.swift in Sources */,
